@@ -7,13 +7,10 @@
 
 class AnimationManager
 {
-public:
+  public:
     String currentAnim;
     std::map<String, Animation> animList;
- 
-    AnimationManager()
-    {}
-        
+
     void create(String name, Texture &texture, int count, float speed, int x, int y, float step, int width, int height)
     {
         animList[name] = Animation(name, texture, count, speed, x, y, step, width, height);
@@ -34,7 +31,7 @@ public:
             Animation animation;
             currentAnim = animElement->Attribute("title");
             int delay = atoi(animElement->Attribute("delay"));
-            animation.speed = 1.0/delay;
+            animation.speed = 1.0 / delay;
             animation.sprite.setTexture(texture);
             TiXmlElement *cut;
             cut = animElement->FirstChildElement("cut");
@@ -53,33 +50,33 @@ public:
             animElement = animElement->NextSiblingElement("animation");
         }
     }
-    
-    void draw(RenderWindow &window, int x=0, int y=0)
+
+    void draw(RenderWindow &window, int x = 0, int y = 0)
     {
-        animList[currentAnim].sprite.setPosition(x,y);
+        animList[currentAnim].sprite.setPosition(x, y);
         window.draw(animList[currentAnim].sprite);
     }
-    
+
     void set(String name)
     {
         currentAnim = name;
     }
-    
-    void flip(bool isFlip) 
+
+    void flip(bool isFlip)
     {
         animList[currentAnim].flip = isFlip;
     }
-    
+
     void tick(float time)
     {
         animList[currentAnim].tick(time);
     }
-    
-    void pause() 
+
+    void pause()
     {
         animList[currentAnim].isPlaying = false;
     }
-    
+
     void play()
     {
         animList[currentAnim].isPlaying = true;

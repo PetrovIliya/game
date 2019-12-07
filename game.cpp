@@ -36,7 +36,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Star wars");
     sf::Clock deltaClock;
     Level level;
-    level.LoadFromFile("test.tmx");
+    level.LoadFromFile("maps/dantuinMap.tmx");
     AnimationManager animationManager;
     Texture jediTexture;
     Player player(animationManager);
