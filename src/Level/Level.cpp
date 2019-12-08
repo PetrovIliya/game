@@ -59,8 +59,8 @@ bool Level::LoadFromFile(string filename)
     tilesetImage.loadFromImage(img);
     tilesetImage.setSmooth(false);
 
-    int columns = tilesetImage.getSize().x / tileWidth;
-    int rows = tilesetImage.getSize().y / tileHeight;
+    columns = tilesetImage.getSize().x / tileWidth;
+    rows = tilesetImage.getSize().y / tileHeight;
 
     vector<Rect<int>> subRects;
 
@@ -180,7 +180,7 @@ bool Level::LoadFromFile(string filename)
                 Sprite sprite;
                 sprite.setTexture(tilesetImage);
                 sprite.setTextureRect(Rect<int>(0, 0, 0, 0));
-                sprite.setPosition((float)x, (float)y);
+                // sprite.setPosition((float)x, (float)y);
 
                 if (objectElement->Attribute("width") != NULL)
                 {
@@ -199,7 +199,7 @@ bool Level::LoadFromFile(string filename)
                 object.type = objectType;
                 object.sprite = sprite;
 
-                Rect <int> objectRect;
+                Rect<int> objectRect;
                 objectRect.top = y;
                 objectRect.left = x;
                 objectRect.height = height;
@@ -261,6 +261,11 @@ vector<Object> Level::GetObjects(string name)
 Vector2i Level::GetTileSize()
 {
     return Vector2i(tileWidth, tileHeight);
+}
+
+int Level::GetWindowWidth()
+{
+    return width * tileWidth;
 }
 
 void Level::Draw(RenderWindow &window)

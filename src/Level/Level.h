@@ -1,9 +1,9 @@
 #ifndef SFML_GAME_LEVEL_H
 #define SFML_GAME_LEVEL_H
-#include<string>
-#include<vector>
-#include<map>
-#include<SFML/Graphics.hpp>
+#include <string>
+#include <vector>
+#include <map>
+#include <SFML/Graphics.hpp>
 
 using namespace std;
 using namespace sf;
@@ -28,15 +28,18 @@ struct Layer
 
 class Level
 {
-public:
+  public:
     bool LoadFromFile(string filename);
     Object GetObject(string name);
     vector<Object> GetObjects(string name);
     void Draw(RenderWindow &window);
+    int GetWindowWidth();
     Vector2i GetTileSize();
-
-private:
+    int columns;
+    int rows;
     int width, height, tileWidth, tileHeight;
+
+  private:
     int firstTileID;
     Rect<float> drawingBounds;
     Texture tilesetImage;
@@ -44,4 +47,3 @@ private:
     vector<Layer> layers;
 };
 #endif
-

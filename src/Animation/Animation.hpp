@@ -38,7 +38,6 @@ class Animation
             return;
         }
         currentFrame += speed * time;
-        FrameLoopHandler();
         if (currentFrame > frames.size())
         {
             currentFrame -= frames.size();
@@ -52,18 +51,6 @@ class Animation
     }
 
   private:
-    void FrameLoopHandler()
-    {
-        if (name == AnimConfig::WALK_ANIMATION && currentFrame >= 9)
-        {
-            currentFrame = 3;
-        }
-
-        if (name == AnimConfig::DEATH_NAME && currentFrame >= 10)
-        {
-            currentFrame = 9;
-        }
-    }
 };
 
 #endif

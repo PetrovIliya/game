@@ -24,17 +24,11 @@
   <cut w="59" x="672" y="146" h="54" row="1" col="1"/>
  </animation>
  <animation title="block" delay="150">
-  <cut w="35" x="367" y="271" h="65" row="1" col="1"/>
-  <cut w="35" x="404" y="271" h="65" row="1" col="1"/>
-  <cut w="35" x="441" y="271" h="65" row="1" col="1"/>
-  <cut w="34" x="478" y="272" h="64" row="1" col="1"/>
-  <cut w="34" x="514" y="272" h="64" row="1" col="1"/>
-  <cut w="34" x="550" y="272" h="64" row="1" col="1"/>
   <cut w="33" x="586" y="268" h="68" row="1" col="1"/>
   <cut w="32" x="620" y="268" h="68" row="1" col="1"/>
   <cut w="32" x="654" y="268" h="68" row="1" col="1"/>
  </animation>
- <animation title="reflect" delay="150">
+ <animation title="reflect" delay="100">
   <cut w="43" x="367" y="632" h="53" row="1" col="1"/>
   <cut w="45" x="410" y="632" h="54" row="1" col="1"/>
   <cut w="45" x="456" y="632" h="53" row="1" col="1"/>
@@ -48,7 +42,7 @@
   <cut w="33" x="564" y="688" h="71" row="1" col="1"/>
   <cut w="33" x="599.25" y="687.5" h="72" row="1" col="1"/>
  </animation>
- <animation title="jump" delay="150">
+ <animation title="jump" delay="50">
   <cut w="32" x="472" y="4140" h="67" row="1" col="1"/>
   <cut w="32" x="506" y="4140" h="67" row="1" col="1"/>
   <cut w="32" x="540" y="4140" h="67" row="1" col="1"/>

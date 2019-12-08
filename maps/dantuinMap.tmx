@@ -24011,9 +24011,8 @@
    <tile gid="8134"/>
   </data>
  </layer>
- <objectgroup id="4" name="grouond">
-  <object id="8" x="2.66667" y="433.333" width="3840" height="372"/>
-  <object id="9" x="128" y="-640"/>
+ <objectgroup id="4" name="ground">
+  <object id="8" name="ground" type="main" x="2.66667" y="433.333" width="3840" height="372"/>
  </objectgroup>
  <layer id="1" name="clouds" width="240" height="50">
   <data>

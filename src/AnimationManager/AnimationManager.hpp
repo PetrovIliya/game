@@ -21,40 +21,27 @@ class AnimationManager
     {
         TiXmlDocument animFile(fileName.c_str());
         animFile.LoadFile();
-
         TiXmlElement *head;
         head = animFile.FirstChildElement("sprites");
         TiXmlElement *animElement;
         animElement = head->FirstChildElement("animation");
-        while (animElement)
-        {
-            Animation animation;
-            currentAnim = animElement->Attribute("title");
-            int delay = atoi(animElement->Attribute("delay"));
-            animation.speed = 1.0 / delay;
-            animation.sprite.setTexture(texture);
-            TiXmlElement *cut;
-            cut = animElement->FirstChildElement("cut");
-            while (cut)
-            {
-                int x = atoi(cut->Attribute("x"));
-                int y = atoi(cut->Attribute("y"));
-                int width = atoi(cut->Attribute("w"));
-                int height = atoi(cut->Attribute("h"));
-
-                animation.frames.push_back(IntRect(x, y, width, height));
-                animation.frames_flip.push_back(IntRect(x + width, y, -width, height));
-                cut = cut->NextSiblingElement("cut");
-            }
-            animList[currentAnim] = animation;
-            animElement = animElement->NextSiblingElement("animation");
-        }
+        setAnimationsFromFile(animElement, texture);
     }
 
-    void draw(RenderWindow &window, int x = 0, int y = 0)
+    void setPosition(sf::Vector2f position)
     {
-        animList[currentAnim].sprite.setPosition(x, y);
+        animList[currentAnim].sprite.setPosition(position);
+    }
+
+    void draw(RenderWindow &window)
+    {
+        setFrameOrigin();
         window.draw(animList[currentAnim].sprite);
+    }
+
+    resetAnimation()
+    {
+        animList[currentAnim].currentFrame = 0;
     }
 
     void set(String name)
@@ -80,6 +67,45 @@ class AnimationManager
     void play()
     {
         animList[currentAnim].isPlaying = true;
+    }
+
+  private:
+    void setAnimationsFromFile(TiXmlElement *animElement, Texture &texture)
+    {
+        while (animElement)
+        {
+            Animation animation;
+            currentAnim = animElement->Attribute("title");
+            int delay = atoi(animElement->Attribute("delay"));
+            animation.speed = 1.0 / delay;
+            animation.sprite.setTexture(texture);
+            setFramesFromFile(animElement, animation);
+            animList[currentAnim] = animation;
+            animElement = animElement->NextSiblingElement("animation");
+        }
+    }
+
+    void setFramesFromFile(TiXmlElement *animElement, Animation &animation)
+    {
+        TiXmlElement *cut;
+        cut = animElement->FirstChildElement("cut");
+        while (cut)
+        {
+            int x = atoi(cut->Attribute("x"));
+            int y = atoi(cut->Attribute("y"));
+            int width = atoi(cut->Attribute("w"));
+            int height = atoi(cut->Attribute("h"));
+
+            animation.frames.push_back(IntRect(x, y, width, height));
+            animation.frames_flip.push_back(IntRect(x + width, y, -width, height));
+            cut = cut->NextSiblingElement("cut");
+        }
+    }
+
+    void setFrameOrigin()
+    {
+        int frameHeight = animList[currentAnim].frames[animList[currentAnim].currentFrame].height;
+        animList[currentAnim].sprite.setOrigin(0, frameHeight);
     }
 };
 
