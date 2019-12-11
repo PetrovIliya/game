@@ -3,21 +3,20 @@
 
 #include "../AnimationManager/AnimationManager.hpp"
 #include "../Level/Level.h"
+#include "../../config/WindowConfig.hpp"
 
 using namespace std;
 
 class Player
 {
   public:
-    float x, y, dx, dy, width, height, moveCounter;
+    AnimationManager animationManager;
     bool attack, flip, onGround, onJump, canMove, keyPressed;
     sf::Vector2f position;
     vector<Object> groundObjects;
     Object mainGroundObject;
 
-    std::map<std::string, bool> key;
-
-    Player(AnimationManager &animationManager, Texture &jediTexture, vector<Object> GroundObjects)
+    Player(Texture &jediTexture, vector<Object> GroundObjects)
     {
         initObjects(GroundObjects);
         position = {100, (float)mainGroundObject.rect.top};
@@ -28,10 +27,14 @@ class Player
         {
             std::exit(0);
         }
-        animationManager.loadFromXml("textures/PlayerAnimations.xml", jediTexture);
+        animationManager.loadFromXml(AnimConfig::JEDI_ANIMS_PATH, jediTexture);
     }
 
-    void update(float time, AnimationManager &animationManager)
+    Player()
+    {
+    }
+
+    void update(float time, sf::RenderWindow &window)
     {
         keyPressed = false;
         onGround = position.y >= (float)mainGroundObject.rect.top;
@@ -45,6 +48,8 @@ class Player
         animationManager.flip(flip);
         animationManager.setPosition(position);
         animationManager.tick(time);
+
+        animationManager.draw(window);
     }
 
     void setView(sf::View &view, int realWindowWidth, int tileWidth)

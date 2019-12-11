@@ -58,6 +58,13 @@ find_package(Freetype REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(SFML 2 COMPONENTS window graphics system REQUIRED)
 
-add_executable(game game.cpp src/Level/Level.cpp src/Level/Level.h src/Enemy.cpp src/Enemy.h)
+add_executable(
+                  game game.cpp
+                  src/Level/Level.cpp src/Level/Level.h 
+                  src/Enemy/Enemy.cpp src/Enemy/Enemy.h 
+                  src/Bullet/Bullet.cpp src/Bullet/Bullet.h
+                  src/Bullets/Bullets.cpp src/Bullets/Bullets.h
+                  src/EnemyManager/EnemyManager.cpp src/EnemyManager/EnemyManager.h
+                  src/Clone/Clone.cpp src/Clone/Clone.h src/GameManager/GameManager.cpp src/GameManager/GameManager.h)
 
 target_link_libraries(game ${SFML_LIBRARIES} ${SFML_DEPENDENCIES} tinyXML)

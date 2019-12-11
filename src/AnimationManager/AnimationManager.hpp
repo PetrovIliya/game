@@ -11,12 +11,6 @@ class AnimationManager
     String currentAnim;
     std::map<String, Animation> animList;
 
-    void create(String name, Texture &texture, int count, float speed, int x, int y, float step, int width, int height)
-    {
-        animList[name] = Animation(name, texture, count, speed, x, y, step, width, height);
-        currentAnim = name;
-    }
-
     void loadFromXml(std::string fileName, Texture &texture)
     {
         TiXmlDocument animFile(fileName.c_str());
@@ -33,13 +27,18 @@ class AnimationManager
         animList[currentAnim].sprite.setPosition(position);
     }
 
+    float getCurrentFrame()
+    {
+        return animList[currentAnim].currentFrame;
+    }
+
     void draw(RenderWindow &window)
     {
         setFrameOrigin();
         window.draw(animList[currentAnim].sprite);
     }
 
-    resetAnimation()
+    void resetAnimation()
     {
         animList[currentAnim].currentFrame = 0;
     }
@@ -67,6 +66,17 @@ class AnimationManager
     void play()
     {
         animList[currentAnim].isPlaying = true;
+    }
+
+    void setFrameOrigin()
+    {
+        int frameHeight = animList[currentAnim].frames[animList[currentAnim].currentFrame].height;
+        animList[currentAnim].sprite.setOrigin(0, frameHeight);
+    }
+
+    String getCurrentAnim()
+    {
+        return currentAnim;
     }
 
   private:
@@ -100,12 +110,6 @@ class AnimationManager
             animation.frames_flip.push_back(IntRect(x + width, y, -width, height));
             cut = cut->NextSiblingElement("cut");
         }
-    }
-
-    void setFrameOrigin()
-    {
-        int frameHeight = animList[currentAnim].frames[animList[currentAnim].currentFrame].height;
-        animList[currentAnim].sprite.setOrigin(0, frameHeight);
     }
 };
 
