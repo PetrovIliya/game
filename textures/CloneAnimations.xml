@@ -1,0 +1,81 @@
+<!DOCTYPE SpriteDecomposer>
+<sprites image="clones.png" transparentColor="">
+ <animation title="walk" delay="100">
+  <cut w="42" x="328" y="60" h="58" row="1" col="1"/>
+  <cut w="41" x="373" y="61" h="57" row="1" col="1"/>
+  <cut w="42" x="416" y="61" h="57" row="1" col="1"/>
+  <cut w="42" x="460" y="60" h="58" row="1" col="1"/>
+  <cut w="41" x="505" y="57" h="61" row="1" col="1"/>
+  <cut w="43" x="548" y="60" h="58" row="1" col="1"/>
+ </animation>
+ <animation title="attack" delay="100">
+  <cut w="42" x="328" y="1" h="57" row="1" col="1"/>
+  <cut w="42" x="372" y="1" h="57" row="1" col="1"/>
+  <cut w="42" x="416" y="1" h="57" row="1" col="1"/>
+  <cut w="41" x="460" y="1" h="57" row="1" col="1"/>
+  <cut w="51" x="504" y="1" h="57" row="1" col="1"/>
+  <cut w="41" x="557" y="1" h="57" row="1" col="1"/>
+  <cut w="41" x="600" y="1" h="57" row="1" col="1"/>
+ </animation>
+ <animation title="jump" delay="100">
+  <cut w="48" x="328" y="566" h="59" row="1" col="1"/>
+  <cut w="47" x="378" y="564" h="61" row="1" col="1"/>
+  <cut w="49" x="427" y="563" h="62" row="1" col="1"/>
+  <cut w="47" x="478" y="565" h="60" row="1" col="1"/>
+  <cut w="47" x="527" y="566" h="59" row="1" col="1"/>
+ </animation>
+ <animation title="trap" delay="300">
+  <cut w="36" x="328" y="182" h="59" row="1" col="1"/>
+  <cut w="32" x="366" y="180" h="61" row="1" col="1"/>
+ </animation>
+ <animation title="attack2" delay="100">
+  <cut w="35" x="328" y="434" h="57" row="1" col="1"/>
+  <cut w="38" x="365" y="434" h="57" row="1" col="1"/>
+  <cut w="40" x="405" y="434" h="57" row="1" col="1"/>
+  <cut w="41" x="447" y="434" h="57" row="1" col="1"/>
+  <cut w="44" x="490" y="417" h="74" row="1" col="1"/>
+  <cut w="41" x="536" y="417" h="74" row="1" col="1"/>
+  <cut w="44" x="579" y="417" h="74" row="1" col="1"/>
+ </animation>
+ <animation title="fall" delay="100">
+  <cut w="42" x="328" y="254" h="61" row="1" col="1"/>
+  <cut w="49" x="372" y="243" h="72" row="1" col="1"/>
+  <cut w="57" x="423" y="265" h="50" row="1" col="1"/>
+  <cut w="54" x="482" y="284" h="31" row="1" col="1"/>
+  <cut w="54" x="538" y="281" h="34" row="1" col="1"/>
+  <cut w="59" x="594" y="288" h="27" row="1" col="1"/>
+ </animation>
+ <animation title="rise" delay="100">
+  <cut w="60" x="328" y="340" h="16" row="1" col="1"/>
+  <cut w="59" x="390" y="340" h="16" row="1" col="1"/>
+  <cut w="59" x="451" y="340" h="15" row="1" col="1"/>
+  <cut w="50" x="514" y="326" h="30" row="1" col="1"/>
+  <cut w="45" x="566" y="325" h="31" row="1" col="1"/>
+  <cut w="35" x="613" y="317" h="41" row="1" col="1"/>
+  <cut w="33" x="328" y="372" h="43" row="1" col="1"/>
+  <cut w="34" x="363" y="364" h="51" row="1" col="1"/>
+  <cut w="42" x="399" y="357" h="58" row="1" col="1"/>
+  <cut w="42" x="443" y="358" h="57" row="1" col="1"/>
+  <cut w="42" x="487" y="358" h="57" row="1" col="1"/>
+ </animation>
+ <animation title="attack3" delay="100">
+  <cut w="35" x="328" y="434" h="57" row="1" col="1"/>
+  <cut w="38" x="365" y="434" h="57" row="1" col="1"/>
+  <cut w="40" x="405" y="434" h="57" row="1" col="1"/>
+  <cut w="41" x="447" y="434" h="57" row="1" col="1"/>
+  <cut w="44" x="490" y="417" h="74" row="1" col="1"/>
+  <cut w="41" x="536" y="417" h="74" row="1" col="1"/>
+  <cut w="44" x="579" y="417" h="74" row="1" col="1"/>
+  <cut w="51" x="328" y="493" h="68" row="1" col="1"/>
+  <cut w="51" x="381" y="504" h="57" row="1" col="1"/>
+  <cut w="45" x="434" y="504" h="57" row="1" col="1"/>
+  <cut w="42" x="481" y="504" h="57" row="1" col="1"/>
+  <cut w="44" x="525" y="504" h="57" row="1" col="1"/>
+  <cut w="43" x="571" y="504" h="57" row="1" col="1"/>
+ </animation>
+ <animation title="stay" delay="150">
+  <cut w="42" x="328" y="1" h="58" row="1" col="1"/>
+  <cut w="40" x="558" y="1" h="57" row="1" col="1"/>
+  <cut w="40" x="601" y="1" h="57" row="1" col="1"/>
+ </animation>
+</sprites>
