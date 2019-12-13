@@ -107,5 +107,13 @@
   <cut w="2" x="659" y="2829" h="3" row="1" col="1"/>
   <cut w="39" x="659" y="2821" h="54" row="1" col="1"/>
  </animation>
+  <animation title="reflect2" delay="80">
+  <cut w="48" x="368" y="3538" h="50" row="1" col="1"/>
+  <cut w="49" x="418" y="3538" h="50" row="1" col="1"/>
+  <cut w="47" x="470" y="3538" h="50" row="1" col="1"/>
+  <cut w="50" x="520" y="3539" h="49" row="1" col="1"/>
+  <cut w="47" x="573" y="3539" h="49" row="1" col="1"/>
+  <cut w="51" x="624" y="3538.5" h="49" row="1" col="1"/>
+ </animation>
 
 </sprites>

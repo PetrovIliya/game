@@ -39,9 +39,9 @@ class EnemyManager
                 if (currentEnemyFrame < 3.1 && currentEnemyFrame > 2.9)
                 {
                     Vector2f position = (*it)->position;
-                    position.y -= 38;
-                    bullets.add(position);
+                    bullets.add(position, (*it)->flip);
                 }
+                (*it)->flip = playerPositionX < (*it)->position.x;
             }
             else
             {

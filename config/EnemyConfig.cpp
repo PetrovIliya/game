@@ -3,9 +3,9 @@
 
 class EnemyConfig
 {
-  public:
-    static const int VIEW_DISTANCE = 100;
-    // inline static const std::string VIEW_DISTANCE = "textures/CloneAnimations.xml";
+public:
+  static const int VIEW_DISTANCE = 300;
+  // inline static const std::string VIEW_DISTANCE = "textures/CloneAnimations.xml";
 };
 
 #endif

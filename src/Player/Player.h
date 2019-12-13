@@ -11,7 +11,7 @@ class Player
 {
   public:
     AnimationManager animationManager;
-    bool attack, flip, onGround, onJump, canMove, keyPressed;
+    bool attack, flip, onGround, onJump, canMove, keyPressed, underAttack;
     sf::Vector2f position;
     vector<Object> groundObjects;
     Object mainGroundObject;
@@ -22,7 +22,7 @@ class Player
         position = {100, (float)mainGroundObject.rect.top};
         attack = onGround = onJump = keyPressed = false;
         canMove = true;
-        animationManager.setPosition(position);
+        setPosition(position);
         if (!jediTexture.loadFromFile(AnimConfig::JEDI_TEXTURE_PATH))
         {
             std::exit(0);
@@ -38,11 +38,12 @@ class Player
     {
         keyPressed = false;
         onGround = position.y >= (float)mainGroundObject.rect.top;
-        moveHandler(time, animationManager);
-        blockHandler(time, animationManager);
-        jumpHandler(time, animationManager);
-        forceHandler(time, animationManager);
-        attackHandler(time, animationManager);
+        moveHandler(time);
+        jumpHandler(time);
+        reflectHandler();
+        blockHandler();
+        forceHandler();
+        attackHandler();
         canMove = !keyPressed;
 
         animationManager.flip(flip);
@@ -74,7 +75,7 @@ class Player
         }
     }
 
-    void moveHandler(float time, AnimationManager &animationManager)
+    void moveHandler(float time)
     {
         if (!onGround && !onJump)
         {
@@ -82,45 +83,53 @@ class Player
         }
         if (Keyboard::isKeyPressed(Keyboard::Right) && canMove)
         {
-            if (onGround)
-            {
-                animationManager.set(AnimConfig::WALK_ANIMATION);
-                flip = false;
-            }
-
+            setWalkAnimationAndDirection(false);
             position.x += 0.5 * time;
         }
         else if (Keyboard::isKeyPressed(Keyboard::Left) && canMove)
         {
-            if (onGround)
-            {
-                animationManager.set(AnimConfig::WALK_ANIMATION);
-                flip = true;
-            }
+            setWalkAnimationAndDirection(true);
             position.x -= 0.5 * time;
         }
-        else if (onGround)
+        else if (onGround && !underAttack)
         {
-            animationManager.set(AnimConfig::STAY_ANIMATION);
+            setStayAnimation();
         }
     }
 
-    void blockHandler(float time, AnimationManager &animationManager)
+    void reflectHandler()
     {
-        if (Keyboard::isKeyPressed(Keyboard::R) && onGround)
+        if (underAttack && isBlocking())
         {
-            animationManager.set(AnimConfig::BLOCK_ANIMATION);
+            setReflectAnimation();
+        }
+        else if (!isReflecting())
+        {
+            underAttack = false;
+        }
+        if (isReflecting() && animationManager.isLastFrame())
+        {
+            resetAnimation();
+            setStayAnimation();
+        }
+    }
+
+    void blockHandler()
+    {
+        if (Keyboard::isKeyPressed(Keyboard::R) && onGround && !isReflecting())
+        {
+            setBlockAnimation();
             canMove = false;
             keyPressed = true;
         }
     }
 
-    void jumpHandler(float time, AnimationManager &animationManager)
+    void jumpHandler(float time)
     {
         if (Keyboard::isKeyPressed(Keyboard::Up) && onGround && canMove)
         {
-            animationManager.set(AnimConfig::JUMP_ANIMATION);
-            animationManager.resetAnimation();
+            setJumpAnimation();
+            resetAnimation();
             onJump = true;
             keyPressed = true;
         }
@@ -136,23 +145,93 @@ class Player
         }
     }
 
-    void forceHandler(float time, AnimationManager &animationManager)
+    void forceHandler()
     {
         if (Keyboard::isKeyPressed(Keyboard::Q) && onGround)
         {
-            animationManager.set(AnimConfig::FORCE_ANIMATION);
+            setFroceAnimation();
             canMove = false;
             keyPressed = true;
         }
     }
 
-    void attackHandler(float time, AnimationManager &animationManager)
+    void attackHandler()
     {
         if (Keyboard::isKeyPressed(Keyboard::Space) && onGround)
         {
-            animationManager.set(AnimConfig::ATTACK_ANIMATION);
+            setAttackAnimation();
             canMove = false;
             keyPressed = true;
+        }
+    }
+
+    void setPosition(Vector2f position)
+    {
+        animationManager.setPosition(position);
+    }
+
+    void setWalkAnimation()
+    {
+        animationManager.set(AnimConfig::WALK_ANIMATION);
+    }
+
+    void setStayAnimation()
+    {
+        animationManager.set(AnimConfig::STAY_ANIMATION);
+    }
+
+    void setBlockAnimation()
+    {
+        animationManager.set(AnimConfig::BLOCK_ANIMATION);
+    }
+
+    void setReflectAnimation()
+    {
+        animationManager.set(AnimConfig::REFLECT_ANIMATION);
+    }
+
+    void setAttackAnimation()
+    {
+        animationManager.set(AnimConfig::ATTACK_ANIMATION);
+    }
+
+    void setFroceAnimation()
+    {
+        animationManager.set(AnimConfig::FORCE_ANIMATION);
+    }
+
+    void setJumpAnimation()
+    {
+        animationManager.set(AnimConfig::JUMP_ANIMATION);
+    }
+
+    sf::String getCurrentAnimName()
+    {
+        return animationManager.getCurrentAnim();
+    }
+
+    void resetAnimation()
+    {
+        animationManager.resetAnimation();
+        ;
+    }
+
+    bool isReflecting()
+    {
+        return getCurrentAnimName() == AnimConfig::REFLECT_ANIMATION;
+    }
+
+    bool isBlocking()
+    {
+        return getCurrentAnimName() == AnimConfig::BLOCK_ANIMATION;
+    }
+
+    void setWalkAnimationAndDirection(bool flip)
+    {
+        if (onGround)
+        {
+            setWalkAnimation();
+            Player::flip = flip;
         }
     }
 };

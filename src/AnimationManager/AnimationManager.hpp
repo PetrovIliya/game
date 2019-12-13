@@ -32,6 +32,26 @@ class AnimationManager
         return animList[currentAnim].currentFrame;
     }
 
+    Animation getCurrentAnimation()
+    {
+        return animList[currentAnim];
+    }
+
+    int getCurrentSpriteSize()
+    {
+        return animList[currentAnim].getSpriteSize();
+    }
+
+    bool isLastFrame()
+    {
+        return getCurrentFrame() >= (float)getQuantityOfFrames() - 0.1;
+    }
+
+    int getQuantityOfFrames()
+    {
+        return animList[currentAnim].getQuantityOfFrames();
+    }
+
     void draw(RenderWindow &window)
     {
         setFrameOrigin();
@@ -70,8 +90,8 @@ class AnimationManager
 
     void setFrameOrigin()
     {
-        int frameHeight = animList[currentAnim].frames[animList[currentAnim].currentFrame].height;
-        animList[currentAnim].sprite.setOrigin(0, frameHeight);
+        int frameHeight = animList[currentAnim].getFrameHeight();
+        animList[currentAnim].setOrigin(0, frameHeight);
     }
 
     String getCurrentAnim()

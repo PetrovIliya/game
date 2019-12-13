@@ -13,10 +13,16 @@ class Bullet
     sf::ConvexShape bullet;
     bool isAlive;
     float bulletSpeed;
+    Vector2f position;
 
-    Bullet(sf::Vector2f position)
+    Bullet(sf::Vector2f position, bool enemyFlip)
     {
-        bulletSpeed = 0.1f;
+        bulletSpeed = 0.3f;
+        Bullet::position = position;
+        if (enemyFlip)
+        {
+            bulletSpeed = -bulletSpeed;
+        }
         isAlive = true;
         sf::ConvexShape bulletT;
         bulletT.setFillColor(sf::Color(255, 0, 0));
@@ -36,18 +42,27 @@ class Bullet
         bullet = bulletT;
     }
 
-    void update(float time)
+    void update(float time, RenderWindow &window, sf::View &view)
     {
         Vector2f pos = bullet.getPosition();
+        int leftEndOfView = view.getCenter().x - (window.getSize().x / 2);
+        int rightEndOfView = view.getCenter().x + (window.getSize().x / 2);
 
-        if (pos.x < 0 || pos.x > 800)
+        if (pos.x < leftEndOfView || pos.x > rightEndOfView)
         {
             isAlive = false;
         }
 
         pos.x += bulletSpeed * time;
         bullet.setPosition(pos);
+        Bullet::position = pos;
     }
+
+    void changeDirection()
+    {
+        bulletSpeed = -bulletSpeed;
+    }
+
     void draw(RenderWindow &window)
     {
         window.draw(bullet);

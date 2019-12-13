@@ -23,9 +23,9 @@ class GameManager
         deltaTime = deltaClock.restart().asMicroseconds() / 1000;
         level.Draw(window);
         player.setView(view, level.GetWindowWidth(), level.tileWidth);
-        player.update(deltaTime, window);
-        bullets.update(deltaTime, window);
+        bullets.update(deltaTime, window, view, player);
         enemyManager.update(window, deltaTime, player.position.x, bullets);
+        player.update(deltaTime, window);
     }
 
   private:

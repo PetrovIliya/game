@@ -31,6 +31,26 @@ class Animation
     {
     }
 
+    int getSpriteSize()
+    {
+        return sprite.getTextureRect().width;
+    }
+
+    int getQuantityOfFrames()
+    {
+        return frames.size();
+    }
+
+    void setOrigin(int x, int y)
+    {
+        sprite.setOrigin(x, y);
+    }
+
+    int getFrameHeight()
+    {
+        return frames[currentFrame].height;
+    }
+
     void tick(float time)
     {
         if (!isPlaying)
