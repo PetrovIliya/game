@@ -94,7 +94,7 @@ class AnimationManager
         animList[currentAnim].setOrigin(0, frameHeight);
     }
 
-    String getCurrentAnim()
+    String getCurrentAnimationName()
     {
         return currentAnim;
     }

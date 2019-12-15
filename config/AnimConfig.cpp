@@ -12,9 +12,10 @@ public:
   inline static const sf::String STAY_ANIMATION = "stay";
   inline static const sf::String BLOCK_ANIMATION = "block";
   inline static const sf::String JUMP_ANIMATION = "jump";
+  inline static const sf::String FALL_ANIMATION = "fall";
   inline static const sf::String DEATH_ANIMATION = "death";
   inline static const sf::String FORCE_ANIMATION = "force";
-  inline static const sf::String REFLECT_ANIMATION = "reflect2";
+  inline static const sf::String REFLECT_ANIMATION = "reflect";
   inline static const sf::String JEDI_TEXTURE_PATH = "textures/jedi.png";
   inline static const sf::String JEDI_ANIMS_PATH = "textures/PlayerAnimations.xml";
   inline static const sf::String CLONE_TEXTURE_PATH = "textures/clones.png";

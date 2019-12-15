@@ -11,12 +11,13 @@ class Bullet
 {
   public:
     sf::ConvexShape bullet;
-    bool isAlive;
+    bool isAlive, isReflected;
     float bulletSpeed;
     Vector2f position;
 
     Bullet(sf::Vector2f position, bool enemyFlip)
     {
+        isReflected = false;
         bulletSpeed = 0.3f;
         Bullet::position = position;
         if (enemyFlip)
@@ -60,6 +61,7 @@ class Bullet
 
     void changeDirection()
     {
+        isReflected = true;
         bulletSpeed = -bulletSpeed;
     }
 

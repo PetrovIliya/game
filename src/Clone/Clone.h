@@ -46,14 +46,32 @@ class Clone : public Enemy
   private:
     void enemyLogic()
     {
-        if (isAttack)
+        if (isAttack && !isWounded)
         {
-            animationManager.set(AnimConfig::ATTACK_ANIMATION);
+            setAnimation(AnimConfig::ATTACK_ANIMATION);
         }
-        else
+        else if (!isWounded)
         {
-            animationManager.set(AnimConfig::STAY_ANIMATION);
+            setAnimation(AnimConfig::STAY_ANIMATION);
         }
+        if (isWounded && !isFlalling())
+        {
+            setAnimation(AnimConfig::FALL_ANIMATION);
+        }
+        else if (isFlalling() && animationManager.isLastFrame())
+        {
+            animationManager.pause();
+        }
+    }
+
+    void setAnimation(sf::String name)
+    {
+        animationManager.set(name);
+    }
+
+    bool isFlalling()
+    {
+        return animationManager.getCurrentAnimationName() == AnimConfig::FALL_ANIMATION;
     }
 };
 

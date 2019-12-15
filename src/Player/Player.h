@@ -11,7 +11,7 @@ class Player
 {
   public:
     AnimationManager animationManager;
-    bool attack, flip, onGround, onJump, canMove, keyPressed, underAttack;
+    bool attack, flip, onGround, onJump, canMove, keyPressed, underAttack, isAlive;
     sf::Vector2f position;
     vector<Object> groundObjects;
     Object mainGroundObject;
@@ -21,7 +21,7 @@ class Player
         initObjects(GroundObjects);
         position = {100, (float)mainGroundObject.rect.top};
         attack = onGround = onJump = keyPressed = false;
-        canMove = true;
+        canMove = isAlive = true;
         setPosition(position);
         if (!jediTexture.loadFromFile(AnimConfig::JEDI_TEXTURE_PATH))
         {
@@ -38,6 +38,7 @@ class Player
     {
         keyPressed = false;
         onGround = position.y >= (float)mainGroundObject.rect.top;
+        lifeHandler();
         moveHandler(time);
         jumpHandler(time);
         reflectHandler();
@@ -75,26 +76,39 @@ class Player
         }
     }
 
+    void lifeHandler()
+    {
+        if (!isAlive)
+        {
+            setFallAnimation();
+        }
+    }
+
     void moveHandler(float time)
     {
         if (!onGround && !onJump)
         {
             position.y += 0.15 * time;
         }
-        if (Keyboard::isKeyPressed(Keyboard::Right) && canMove)
+        if (Keyboard::isKeyPressed(Keyboard::Right) && ableToMove())
         {
             setWalkAnimationAndDirection(false);
             position.x += 0.5 * time;
         }
-        else if (Keyboard::isKeyPressed(Keyboard::Left) && canMove)
+        else if (Keyboard::isKeyPressed(Keyboard::Left) && ableToMove())
         {
             setWalkAnimationAndDirection(true);
             position.x -= 0.5 * time;
         }
-        else if (onGround && !underAttack)
+        else if (onGround && !underAttack && isAlive)
         {
             setStayAnimation();
         }
+    }
+
+    bool ableToMove()
+    {
+        return canMove && !isReflecting() && !isBlocking() && isAlive;
     }
 
     void reflectHandler()
@@ -103,11 +117,11 @@ class Player
         {
             setReflectAnimation();
         }
-        else if (!isReflecting())
+        else if (!isReflecting() && !Keyboard::isKeyPressed(Keyboard::R))
         {
             underAttack = false;
         }
-        if (isReflecting() && animationManager.isLastFrame())
+        if (isReflecting() && (animationManager.isLastFrame() || !Keyboard::isKeyPressed(Keyboard::R)))
         {
             resetAnimation();
             setStayAnimation();
@@ -116,7 +130,7 @@ class Player
 
     void blockHandler()
     {
-        if (Keyboard::isKeyPressed(Keyboard::R) && onGround && !isReflecting())
+        if (Keyboard::isKeyPressed(Keyboard::R) && onGround && !isReflecting() && isAlive)
         {
             setBlockAnimation();
             canMove = false;
@@ -126,7 +140,7 @@ class Player
 
     void jumpHandler(float time)
     {
-        if (Keyboard::isKeyPressed(Keyboard::Up) && onGround && canMove)
+        if (Keyboard::isKeyPressed(Keyboard::Up) && onGround && canMove && isAlive)
         {
             setJumpAnimation();
             resetAnimation();
@@ -147,7 +161,7 @@ class Player
 
     void forceHandler()
     {
-        if (Keyboard::isKeyPressed(Keyboard::Q) && onGround)
+        if (Keyboard::isKeyPressed(Keyboard::Q) && onGround && isAlive)
         {
             setFroceAnimation();
             canMove = false;
@@ -157,7 +171,7 @@ class Player
 
     void attackHandler()
     {
-        if (Keyboard::isKeyPressed(Keyboard::Space) && onGround)
+        if (Keyboard::isKeyPressed(Keyboard::Space) && onGround && isAlive)
         {
             setAttackAnimation();
             canMove = false;
@@ -205,15 +219,19 @@ class Player
         animationManager.set(AnimConfig::JUMP_ANIMATION);
     }
 
+    void setFallAnimation()
+    {
+        animationManager.set(AnimConfig::FALL_ANIMATION);
+    }
+
     sf::String getCurrentAnimName()
     {
-        return animationManager.getCurrentAnim();
+        return animationManager.getCurrentAnimationName();
     }
 
     void resetAnimation()
     {
         animationManager.resetAnimation();
-        ;
     }
 
     bool isReflecting()
