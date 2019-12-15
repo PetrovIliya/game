@@ -18,7 +18,7 @@ class Bullet
     Bullet(sf::Vector2f position, bool enemyFlip)
     {
         isReflected = false;
-        bulletSpeed = 0.3f;
+        bulletSpeed = 0.6f;
         Bullet::position = position;
         if (enemyFlip)
         {

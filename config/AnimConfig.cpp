@@ -10,6 +10,7 @@ public:
   inline static const sf::String WALK_ANIMATION = "walk";
   inline static const sf::String ATTACK_ANIMATION = "attack";
   inline static const sf::String STAY_ANIMATION = "stay";
+  inline static const sf::String TRAP_ANIMATION = "trap";
   inline static const sf::String BLOCK_ANIMATION = "block";
   inline static const sf::String JUMP_ANIMATION = "jump";
   inline static const sf::String FALL_ANIMATION = "fall";

@@ -46,19 +46,24 @@ class Clone : public Enemy
   private:
     void enemyLogic()
     {
-        if (isAttack && !isWounded)
+        if (isAttack && !isWounded && !isTraped)
         {
             setAnimation(AnimConfig::ATTACK_ANIMATION);
         }
-        else if (!isWounded)
+        else if (!isWounded && !isTraped)
         {
             setAnimation(AnimConfig::STAY_ANIMATION);
         }
-        if (isWounded && !isFlalling())
+        if (isWounded && !isFlalling() && !isTraped)
         {
             setAnimation(AnimConfig::FALL_ANIMATION);
         }
         else if (isFlalling() && animationManager.isLastFrame())
+        {
+            animationManager.pause();
+        }
+
+        if (isTraped && animationManager.isLastFrame())
         {
             animationManager.pause();
         }

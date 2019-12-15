@@ -20,6 +20,8 @@ class GameManager
         Player player(jediTexture, level.GetObjects("ground"));
         GameManager::player = player;
         addClone(cloneTexture, level.GetObjects("ground"), {500, 433});
+        addClone(cloneTexture, level.GetObjects("ground"), {900, 433});
+        addClone(cloneTexture, level.GetObjects("ground"), {1300, 433});
     }
 
     void update(sf::RenderWindow &window, sf::View &view)
@@ -47,8 +49,9 @@ class GameManager
         enemies.push_back(new Clone(cloneTexture, GroundObjects, position));
     }
 
-    void bulletAdd(Vector2f position, bool isEnemyFlip)
+    void addBullet(Vector2f position, bool isEnemyFlip)
     {
+        std::cout << "1" << std::endl;
         if (!isEnemyFlip)
         {
             position.x += 10;
@@ -66,7 +69,7 @@ class GameManager
             Bullet *b = *bulletsIt;
             (*bulletsIt)->update(deltaTime, window, view);
             (*bulletsIt)->draw(window);
-            if ((*bulletsIt)->isReflected && (*bulletsIt)->position.x >= enemy->position.x && (*bulletsIt)->position.x <= enemy->position.x + enemySpriteSie)
+            if ((*bulletsIt)->isReflected && (*bulletsIt)->position.x >= enemy->position.x && (*bulletsIt)->position.x <= enemy->position.x + enemySpriteSie && !enemy->isWounded)
             {
                 enemy->isWounded = true;
                 (*bulletsIt)->isAlive = false;
@@ -99,13 +102,19 @@ class GameManager
         {
             Enemy *e = *enemiesIt;
             bulletsUpdate(window, view, (*enemiesIt));
+            if (player.onForce() && (*enemiesIt)->position.x > leftEndOfView && (*enemiesIt)->position.x < rightEndOfView)
+            {
+                (*enemiesIt)->setCurrentAnimation(AnimConfig::TRAP_ANIMATION);
+                (*enemiesIt)->isTraped = true;
+            }
             if (fabs(player.position.x - (*enemiesIt)->position.x) <= EnemyConfig::VIEW_DISTANCE)
             {
                 (*enemiesIt)->setIsAttack(true);
                 currentEnemyFrame = (*enemiesIt)->getAnimationManager()->getCurrentFrame();
-                if (currentEnemyFrame < 3.1 && currentEnemyFrame > 2.9)
+                if (currentEnemyFrame < 3.1 && currentEnemyFrame > 2.95 && !(*enemiesIt)->isWounded)
                 {
-                    bulletAdd((*enemiesIt)->position, (*enemiesIt)->flip);
+                    addBullet((*enemiesIt)->position, (*enemiesIt)->flip);
+                    (*enemiesIt)->getAnimationManager()->setCurrentFrame(3.13);
                 }
                 (*enemiesIt)->flip = player.position.x < (*enemiesIt)->position.x;
             }

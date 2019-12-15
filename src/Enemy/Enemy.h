@@ -7,7 +7,7 @@
 class Enemy
 {
   public:
-    bool isAttack, flip, onGround, onJump, canMove, isWounded;
+    bool isAttack, flip, onGround, onJump, canMove, isWounded, isTraped;
     sf::Vector2f position;
     vector<Object> groundObjects;
     Object mainGroundObject;
@@ -16,8 +16,8 @@ class Enemy
     {
         initObjects(GroundObjects);
         position = Position;
-        isAttack = onGround = onJump, flip = isWounded = false;
-        canMove = true;
+        isAttack = onGround = onJump = isWounded = isTraped = false;
+        canMove, flip = true;
     }
 
     virtual void draw(sf::RenderWindow &window, float time) = 0;

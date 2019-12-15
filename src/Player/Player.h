@@ -244,6 +244,11 @@ class Player
         return getCurrentAnimName() == AnimConfig::BLOCK_ANIMATION;
     }
 
+    bool onForce()
+    {
+        return getCurrentAnimName() == AnimConfig::FORCE_ANIMATION;
+    }
+
     void setWalkAnimationAndDirection(bool flip)
     {
         if (onGround)

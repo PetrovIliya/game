@@ -32,6 +32,11 @@ class AnimationManager
         return animList[currentAnim].currentFrame;
     }
 
+    void setCurrentFrame(float currentFrame)
+    {
+        animList[currentAnim].currentFrame = currentFrame;
+    }
+
     Animation getCurrentAnimation()
     {
         return animList[currentAnim];
