@@ -1,4 +1,5 @@
-# study project: Star Wars
+# study project: Star Wars 
+# BETA V 1.0
 
 Control:
 
