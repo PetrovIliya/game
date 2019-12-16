@@ -3,6 +3,7 @@
 
 #include "../Enemy/Enemy.h"
 #include "../AnimationManager/AnimationManager.hpp"
+#include "../../config/EnemyConfig.cpp"
 
 class Clone : public Enemy
 {
@@ -38,13 +39,14 @@ class Clone : public Enemy
         return &animationManager;
     }
 
-    void update(float time)
+    void update(float elapsedTime, sf::Clock &elapsedClock)
     {
-        enemyLogic();
+        attackAndLifeHandler();
+        stasisHandler(elapsedTime, elapsedClock);
     }
 
   private:
-    void enemyLogic()
+    void attackAndLifeHandler()
     {
         if (isAttack && !isWounded && !isTraped)
         {
@@ -54,7 +56,7 @@ class Clone : public Enemy
         {
             setAnimation(AnimConfig::STAY_ANIMATION);
         }
-        if (isWounded && !isFlalling() && !isTraped)
+        if (isWounded && !isFlalling())
         {
             setAnimation(AnimConfig::FALL_ANIMATION);
         }
@@ -62,10 +64,21 @@ class Clone : public Enemy
         {
             animationManager.pause();
         }
+    }
 
-        if (isTraped && animationManager.isLastFrame())
+    void stasisHandler(float elapsedTime, sf::Clock &elapsedClock)
+    {
+        if (isTraped)
         {
-            animationManager.pause();
+            if (animationManager.isLastFrame())
+            {
+                animationManager.pause();
+            }
+            if (elapsedTime >= EnemyConfig::STASIS_TIME)
+            {
+                isTraped = false;
+                elapsedClock.restart();
+            }
         }
     }
 

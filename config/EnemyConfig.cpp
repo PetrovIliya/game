@@ -5,7 +5,7 @@ class EnemyConfig
 {
 public:
   static const int VIEW_DISTANCE = 300;
-  // inline static const std::string VIEW_DISTANCE = "textures/CloneAnimations.xml";
+  static const int STASIS_TIME = 5;
 };
 
 #endif

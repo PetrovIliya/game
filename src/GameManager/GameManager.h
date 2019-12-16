@@ -16,6 +16,7 @@ class GameManager
   public:
     GameManager()
     {
+        telekinesisSpeed = 0.2f;
         level.LoadFromFile("maps/dantuinMap.tmx");
         Player player(jediTexture, level.GetObjects("ground"));
         GameManager::player = player;
@@ -26,6 +27,7 @@ class GameManager
 
     void update(sf::RenderWindow &window, sf::View &view)
     {
+        elapsedTime = elapsedClock.getElapsedTime().asSeconds();
         deltaTime = deltaClock.restart().asMicroseconds() / 1000;
         level.Draw(window);
         player.setView(view, level.GetWindowWidth(), level.tileWidth);
@@ -35,8 +37,8 @@ class GameManager
 
   private:
     Texture jediTexture, cloneTexture;
-    sf::Clock deltaClock;
-    float deltaTime, currentEnemyFrame;
+    sf::Clock deltaClock, elapsedClock;
+    float deltaTime, elapsedTime, currentEnemyFrame, telekinesisSpeed;
     Player player;
     Level level;
     std::list<Enemy *> enemies;
@@ -51,7 +53,6 @@ class GameManager
 
     void addBullet(Vector2f position, bool isEnemyFlip)
     {
-        std::cout << "1" << std::endl;
         if (!isEnemyFlip)
         {
             position.x += 10;
@@ -69,7 +70,7 @@ class GameManager
             Bullet *b = *bulletsIt;
             (*bulletsIt)->update(deltaTime, window, view);
             (*bulletsIt)->draw(window);
-            if ((*bulletsIt)->isReflected && (*bulletsIt)->position.x >= enemy->position.x && (*bulletsIt)->position.x <= enemy->position.x + enemySpriteSie && !enemy->isWounded)
+            if (isEnemyHited(enemy, (*bulletsIt), enemySpriteSie))
             {
                 enemy->isWounded = true;
                 (*bulletsIt)->isAlive = false;
@@ -96,22 +97,40 @@ class GameManager
 
     void enemiesUpdate(RenderWindow &window, sf::View &view)
     {
-        int leftEndOfView = view.getCenter().x - (window.getSize().x / 2) - 100;
-        int rightEndOfView = view.getCenter().x + (window.getSize().x / 2) - 100;
+        int leftEndOfView = view.getCenter().x - (window.getSize().x / 2);
+        int rightEndOfView = view.getCenter().x + (window.getSize().x / 2);
         for (enemiesIt = enemies.begin(); enemiesIt != enemies.end(); enemiesIt++)
         {
             Enemy *e = *enemiesIt;
             bulletsUpdate(window, view, (*enemiesIt));
-            if (player.onForce() && (*enemiesIt)->position.x > leftEndOfView && (*enemiesIt)->position.x < rightEndOfView)
+
+            if ((*enemiesIt)->position.x > leftEndOfView && (*enemiesIt)->position.x < rightEndOfView && !(*enemiesIt)->isWounded)
             {
-                (*enemiesIt)->setCurrentAnimation(AnimConfig::TRAP_ANIMATION);
-                (*enemiesIt)->isTraped = true;
+                if (player.onForce())
+                {
+                    (*enemiesIt)->setCurrentAnimation(AnimConfig::TRAP_ANIMATION);
+                    (*enemiesIt)->isTraped = true;
+                }
+            }
+            if (player.flip)
+            {
+                if ((inRightAttackDistance((*enemiesIt)) && player.isAttack() && !(*enemiesIt)->isWounded))
+                {
+                    (*enemiesIt)->isWounded = true;
+                }
+            }
+            else
+            {
+                if (inLeftAttackDistance((*enemiesIt)) && player.isAttack() && !(*enemiesIt)->isWounded)
+                {
+                    (*enemiesIt)->isWounded = true;
+                }
             }
             if (fabs(player.position.x - (*enemiesIt)->position.x) <= EnemyConfig::VIEW_DISTANCE)
             {
                 (*enemiesIt)->setIsAttack(true);
                 currentEnemyFrame = (*enemiesIt)->getAnimationManager()->getCurrentFrame();
-                if (currentEnemyFrame < 3.1 && currentEnemyFrame > 2.95 && !(*enemiesIt)->isWounded)
+                if (currentEnemyFrame < 3.1 && currentEnemyFrame > 2.94 && !(*enemiesIt)->isWounded)
                 {
                     addBullet((*enemiesIt)->position, (*enemiesIt)->flip);
                     (*enemiesIt)->getAnimationManager()->setCurrentFrame(3.13);
@@ -122,7 +141,7 @@ class GameManager
             {
                 (*enemiesIt)->setIsAttack(false);
             }
-            (*enemiesIt)->update(deltaTime);
+            (*enemiesIt)->update(elapsedTime, elapsedClock);
             (*enemiesIt)->draw(window, deltaTime);
             if (e->isWounded && ((*enemiesIt)->position.x < leftEndOfView || (*enemiesIt)->position.x > rightEndOfView))
             {
@@ -130,6 +149,21 @@ class GameManager
                 delete e;
             }
         }
+    }
+
+    bool isEnemyHited(Enemy *enemy, Bullet *bullet, int enemySpriteSie)
+    {
+        return bullet->isReflected && bullet->position.x >= enemy->position.x && bullet->position.x <= enemy->position.x + enemySpriteSie && !enemy->isWounded;
+    }
+
+    bool inLeftAttackDistance(Enemy *enemy)
+    {
+        return player.position.x + PlayerConfig::ATTACK_DISTANCE >= enemy->position.x && player.position.x < enemy->position.x;
+    }
+
+    bool inRightAttackDistance(Enemy *enemy)
+    {
+        return player.position.x - PlayerConfig::ATTACK_DISTANCE <= enemy->position.x && player.position.x > enemy->position.x;
     }
 };
 

@@ -4,6 +4,7 @@
 #include "../AnimationManager/AnimationManager.hpp"
 #include "../Level/Level.h"
 #include "../../config/WindowConfig.hpp"
+#include "../../config/PlayerConfig.cpp"
 
 using namespace std;
 
@@ -11,17 +12,19 @@ class Player
 {
   public:
     AnimationManager animationManager;
-    bool attack, flip, onGround, onJump, canMove, keyPressed, underAttack, isAlive;
+    bool attack, flip, onGround, onJump, canMove, keyPressed, underAttack, isAlive, onCoolDown, canUseForce;
     sf::Vector2f position;
     vector<Object> groundObjects;
     Object mainGroundObject;
+    sf::Clock elapsedClock;
+    float elapsedTime;
 
     Player(Texture &jediTexture, vector<Object> GroundObjects)
     {
         initObjects(GroundObjects);
         position = {100, (float)mainGroundObject.rect.top};
-        attack = onGround = onJump = keyPressed = false;
-        canMove = isAlive = true;
+        attack = onGround = onJump = keyPressed = onCoolDown = false;
+        canMove = isAlive = canUseForce = true;
         setPosition(position);
         if (!jediTexture.loadFromFile(AnimConfig::JEDI_TEXTURE_PATH))
         {
@@ -36,8 +39,10 @@ class Player
 
     void update(float time, sf::RenderWindow &window)
     {
+        elapsedTime = elapsedClock.getElapsedTime().asSeconds();
         keyPressed = false;
         onGround = position.y >= (float)mainGroundObject.rect.top;
+        coolDowndHandler();
         lifeHandler();
         moveHandler(time);
         jumpHandler(time);
@@ -52,6 +57,20 @@ class Player
         animationManager.tick(time);
 
         animationManager.draw(window);
+    }
+
+    void restartTime()
+    {
+        elapsedClock.restart();
+    }
+
+    void coolDowndHandler()
+    {
+        if (onCoolDown && elapsedTime >= PlayerConfig::STASIS_COOLDOWN)
+        {
+            onCoolDown = false;
+            canUseForce = true;
+        }
     }
 
     void setView(sf::View &view, int realWindowWidth, int tileWidth)
@@ -161,11 +180,20 @@ class Player
 
     void forceHandler()
     {
-        if (Keyboard::isKeyPressed(Keyboard::Q) && onGround && isAlive)
+        if (Keyboard::isKeyPressed(Keyboard::Q) && onGround && isAlive && canUseForce)
         {
+            if (!onCoolDown)
+            {
+                restartTime();
+            }
+            onCoolDown = true;
             setFroceAnimation();
             canMove = false;
             keyPressed = true;
+        }
+        if (onCoolDown && !Keyboard::isKeyPressed(Keyboard::Q))
+        {
+            canUseForce = false;
         }
     }
 
@@ -247,6 +275,11 @@ class Player
     bool onForce()
     {
         return getCurrentAnimName() == AnimConfig::FORCE_ANIMATION;
+    }
+
+    bool isAttack()
+    {
+        return getCurrentAnimName() == AnimConfig::ATTACK_ANIMATION;
     }
 
     void setWalkAnimationAndDirection(bool flip)

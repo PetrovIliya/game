@@ -7,7 +7,7 @@
 class Enemy
 {
   public:
-    bool isAttack, flip, onGround, onJump, canMove, isWounded, isTraped;
+    bool isAttack, flip, onGround, onJump, canMove, isWounded, isTraped, isFlalling;
     sf::Vector2f position;
     vector<Object> groundObjects;
     Object mainGroundObject;
@@ -16,13 +16,13 @@ class Enemy
     {
         initObjects(GroundObjects);
         position = Position;
-        isAttack = onGround = onJump = isWounded = isTraped = false;
+        isAttack = onGround = onJump = isWounded = isTraped = isFlalling = false;
         canMove, flip = true;
     }
 
     virtual void draw(sf::RenderWindow &window, float time) = 0;
 
-    virtual void update(float time) = 0;
+    virtual void update(float elapsedTime, sf::Clock &elapsedClock) = 0;
 
     virtual AnimationManager *getAnimationManager() = 0;
 
