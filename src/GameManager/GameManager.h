@@ -21,24 +21,45 @@ class GameManager
         Player player(jediTexture, level.GetObjects("ground"));
         GameManager::player = player;
         mapOffset = enemyCount = 0;
+        paused = wasPaused = false;
     }
 
     void update(sf::RenderWindow &window, sf::View &view)
     {
-        int leftEndOfView = view.getCenter().x - (window.getSize().x / 2);
-        int rightEndOfView = view.getCenter().x + (window.getSize().x / 2);
-        elapsedTime = elapsedClock.getElapsedTime().asSeconds();
-        enemyTime = enemyClock.getElapsedTime().asSeconds();
-        deltaTime = deltaClock.restart().asMicroseconds() / 1000;
-        enemyGeneration(rightEndOfView, leftEndOfView);
-        setMapOffset(view);
-        level.Draw(window, mapOffset);
-        player.setView(view, level.GetWindowWidth(), level.tileWidth);
-        enemiesUpdate(window, view, rightEndOfView, leftEndOfView);
-        player.update(deltaTime, window);
+
+        if (!paused)
+        {
+            pollEvents(window);
+
+            window.clear(Color::White);
+            int leftEndOfView = view.getCenter().x - (window.getSize().x / 2);
+            int rightEndOfView = view.getCenter().x + (window.getSize().x / 2);
+            elapsedTime = elapsedClock.getElapsedTime().asSeconds();
+            enemyTime = enemyClock.getElapsedTime().asSeconds();
+            deltaTime = deltaClock.restart().asMicroseconds() / 1000;
+            if (wasPaused)
+            {
+                deltaTime = elapsedTime = enemyTime = 0;
+            }
+            std::cout << deltaTime << std::endl;
+            enemyGeneration(rightEndOfView, leftEndOfView);
+            setMapOffset(view);
+            level.Draw(window, mapOffset);
+            player.setView(view, level.GetWindowWidth(), level.tileWidth);
+            enemiesUpdate(window, view, rightEndOfView, leftEndOfView);
+            player.update(deltaTime, window);
+            wasPaused = false;
+        }
+    }
+
+    void setPaused(bool paused)
+    {
+        GameManager::paused = paused;
     }
 
   private:
+    sf::Event event;
+    bool paused, wasPaused;
     int mapOffset, tileWidth, enemyCount;
     Texture jediTexture, cloneTexture;
     sf::Clock deltaClock, elapsedClock, enemyClock;
@@ -51,6 +72,38 @@ class GameManager
     std::list<Bullet *> bullets;
     std::list<Bullet *>::iterator bulletsIt;
 
+    void pollEvents(sf::RenderWindow &window)
+    {
+        while (window.pollEvent(event) || paused)
+        {
+            switch (event.type)
+            {
+            case sf::Event::Closed:
+                window.close();
+                break;
+            case sf::Event::KeyPressed:
+                pauseHandler();
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
+    pauseHandler()
+    {
+        if (event.key.code == sf::Keyboard::Escape)
+        {
+            paused = false;
+        }
+        if (event.key.code == sf::Keyboard::Escape && !paused && !wasPaused)
+        {
+            paused = true;
+            wasPaused = true;
+            deltaClock.restart();
+        }
+    }
+
     void enemyGeneration(int rightEndOfView, int leftEndOfView)
     {
         if (enemyTime >= 5)
@@ -59,12 +112,6 @@ class GameManager
             {
                 Vector2f newPosition = {float(rightEndOfView + i * 200), 448};
                 addClone(cloneTexture, newPosition, enemyCount, true);
-                enemyCount++;
-            }
-            for (int i = 0; i < 3; i++)
-            {
-                Vector2f newPosition = {float(leftEndOfView - i * 200), 448};
-                addClone(cloneTexture, newPosition, enemyCount, false);
                 enemyCount++;
             }
             enemyClock.restart();

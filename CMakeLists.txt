@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 project(sfml-game)
 
 set(SFML_STATIC_LIBRARIES TRUE)
+
 add_library(tinyXML STATIC
         tinyxml/tinyxml.h
         tinyxml/tinyxml.cpp
@@ -54,7 +55,12 @@ export(TARGETS tinyXML
         NAMESPACE tinyxml::
         )
 
+
+
+set(OPENAL_INCLUDE_DIR include)
+
 find_package(Freetype REQUIRED)
+find_package(OpenAL REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(SFML 2 COMPONENTS window graphics system REQUIRED)
 
@@ -65,4 +71,4 @@ add_executable(
                   src/Bullet/Bullet.cpp src/Bullet/Bullet.h
                   src/Clone/Clone.cpp src/Clone/Clone.h src/GameManager/GameManager.cpp src/GameManager/GameManager.h)
 
-target_link_libraries(game ${SFML_LIBRARIES} ${SFML_DEPENDENCIES} tinyXML)
+target_link_libraries(game ${SFML_LIBRARIES} ${SFML_DEPENDENCIES} tinyXML )
