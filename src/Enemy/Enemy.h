@@ -7,7 +7,7 @@
 class Enemy
 {
   public:
-    bool isAttack, flip, onGround, onJump, canMove, isWounded, isTraped, isFlalling;
+    bool isAttack, flip, onGround, onJump, canMove, isWounded, isTraped, isFlalling, onColission;
     sf::Vector2f position;
     vector<Object> groundObjects;
     Object mainGroundObject;
@@ -16,7 +16,7 @@ class Enemy
     {
         initObjects(GroundObjects);
         position = Position;
-        isAttack = onGround = onJump = isWounded = isTraped = isFlalling = false;
+        isAttack = onGround = onJump = isWounded = isTraped = isFlalling = onColission = false;
         canMove, flip = true;
     }
 
@@ -27,6 +27,10 @@ class Enemy
     virtual AnimationManager *getAnimationManager() = 0;
 
     virtual void setCurrentAnimation(sf::String name) = 0;
+
+    virtual int getCurrentSpriteSize() = 0;
+
+    virtual int getCurrentSpriteHeight() = 0;
 
     void setIsAttack(bool isAttack)
     {

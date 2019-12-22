@@ -12,8 +12,8 @@ class Player
 {
   public:
     AnimationManager animationManager;
-    bool attack, flip, onGround, onJump, canMove, keyPressed, underAttack, isAlive, onCoolDown, canUseForce;
-    sf::Vector2f position;
+    bool attack, flip, onGround, onJump, canMove, keyPressed, underAttack, isAlive, onCoolDown, canUseForce, ableToMoveRight, ableToMoveLeft;
+    sf::Vector2f position, lastPosition;
     vector<Object> groundObjects;
     Object mainGroundObject;
     sf::Clock elapsedClock;
@@ -24,8 +24,9 @@ class Player
         initObjects(GroundObjects);
         position = {100, (float)mainGroundObject.rect.top};
         attack = onGround = onJump = keyPressed = onCoolDown = false;
-        canMove = isAlive = canUseForce = true;
+        canMove = isAlive = canUseForce = ableToMoveRight = ableToMoveLeft = true;
         setPosition(position);
+        lastPosition = {0, 0};
         if (!jediTexture.loadFromFile(AnimConfig::JEDI_TEXTURE_PATH))
         {
             std::exit(0);
@@ -51,12 +52,20 @@ class Player
         forceHandler();
         attackHandler();
         canMove = !keyPressed;
-
         animationManager.flip(flip);
         animationManager.setPosition(position);
         animationManager.tick(time);
-
         animationManager.draw(window);
+        lastPosition = position;
+    }
+
+    void setView(sf::View &view, int realWindowWidth, int tileWidth)
+    {
+        float centerX = WindowConfig::WINDOW_WIDTH / 2;
+        if (position.x > centerX && position.x < realWindowWidth - centerX)
+        {
+            view.setCenter(position.x, WindowConfig::WINDOW_HEIGHT / 2);
+        }
     }
 
     void restartTime()
@@ -73,15 +82,42 @@ class Player
         }
     }
 
-    void setView(sf::View &view, int realWindowWidth, int tileWidth)
+    bool ableToMove()
     {
-        float centerX = WindowConfig::WINDOW_WIDTH / 2;
-        if (position.x > centerX && position.x < realWindowWidth - centerX)
-        {
-            view.setCenter(position.x, WindowConfig::WINDOW_HEIGHT / 2);
-        }
+        return canMove && !isReflecting() && !isBlocking() && isAlive;
     }
 
+    void setPosition(Vector2f position)
+    {
+        animationManager.setPosition(position);
+    }
+
+    bool isReflecting()
+    {
+        return getCurrentAnimName() == AnimConfig::REFLECT_ANIMATION;
+    }
+
+    bool isBlocking()
+    {
+        return getCurrentAnimName() == AnimConfig::BLOCK_ANIMATION;
+    }
+
+    bool onForce()
+    {
+        return getCurrentAnimName() == AnimConfig::FORCE_ANIMATION;
+    }
+
+    bool isAttack()
+    {
+        return getCurrentAnimName() == AnimConfig::ATTACK_ANIMATION;
+    }
+
+    int getCurrentSpriteSize()
+    {
+        animationManager.getCurrentSpriteSize();
+    }
+
+  private:
     void initObjects(vector<Object> GroundObjects)
     {
         groundObjects = GroundObjects;
@@ -109,12 +145,12 @@ class Player
         {
             position.y += 0.15 * time;
         }
-        if (Keyboard::isKeyPressed(Keyboard::Right) && ableToMove())
+        if (Keyboard::isKeyPressed(Keyboard::Right) && ableToMove() && ableToMoveRight)
         {
             setWalkAnimationAndDirection(false);
             position.x += 0.5 * time;
         }
-        else if (Keyboard::isKeyPressed(Keyboard::Left) && ableToMove())
+        else if (Keyboard::isKeyPressed(Keyboard::Left) && ableToMove() && ableToMoveLeft)
         {
             setWalkAnimationAndDirection(true);
             position.x -= 0.5 * time;
@@ -123,11 +159,6 @@ class Player
         {
             setStayAnimation();
         }
-    }
-
-    bool ableToMove()
-    {
-        return canMove && !isReflecting() && !isBlocking() && isAlive;
     }
 
     void reflectHandler()
@@ -207,11 +238,6 @@ class Player
         }
     }
 
-    void setPosition(Vector2f position)
-    {
-        animationManager.setPosition(position);
-    }
-
     void setWalkAnimation()
     {
         animationManager.set(AnimConfig::WALK_ANIMATION);
@@ -260,26 +286,6 @@ class Player
     void resetAnimation()
     {
         animationManager.resetAnimation();
-    }
-
-    bool isReflecting()
-    {
-        return getCurrentAnimName() == AnimConfig::REFLECT_ANIMATION;
-    }
-
-    bool isBlocking()
-    {
-        return getCurrentAnimName() == AnimConfig::BLOCK_ANIMATION;
-    }
-
-    bool onForce()
-    {
-        return getCurrentAnimName() == AnimConfig::FORCE_ANIMATION;
-    }
-
-    bool isAttack()
-    {
-        return getCurrentAnimName() == AnimConfig::ATTACK_ANIMATION;
     }
 
     void setWalkAnimationAndDirection(bool flip)

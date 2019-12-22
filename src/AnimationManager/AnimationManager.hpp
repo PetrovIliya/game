@@ -47,6 +47,11 @@ class AnimationManager
         return animList[currentAnim].getSpriteSize();
     }
 
+    int getCurrentSpriteHeight()
+    {
+        return animList[currentAnim].getSpriteHeight();
+    }
+
     bool isLastFrame()
     {
         return getCurrentFrame() >= (float)getQuantityOfFrames() - 0.1;

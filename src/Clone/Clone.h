@@ -45,6 +45,16 @@ class Clone : public Enemy
         stasisHandler(elapsedTime, elapsedClock);
     }
 
+    int getCurrentSpriteSize()
+    {
+        return animationManager.getCurrentSpriteSize();
+    }
+
+    int getCurrentSpriteHeight()
+    {
+        return animationManager.getCurrentSpriteHeight();
+    }
+
   private:
     void attackAndLifeHandler()
     {

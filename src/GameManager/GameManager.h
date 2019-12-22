@@ -67,13 +67,17 @@ class GameManager
         int rightEndOfView = view.getCenter().x + (window.getSize().x / 2);
         for (enemiesIt = enemies.begin(); enemiesIt != enemies.end(); enemiesIt++)
         {
-            Enemy *e = *enemiesIt;
-            bulletsUpdate(window, view, (*enemiesIt));
+            int emenySpriteHeight = (*enemiesIt)->getCurrentSpriteHeight();
+            int playerSpriteSize = fabs(player.getCurrentSpriteSize());
+            int enemySpriteSie = fabs((*enemiesIt)->getCurrentSpriteSize());
+            bulletsUpdate(window, view, (*enemiesIt), playerSpriteSize, enemySpriteSie);
             eneymyStasisHandler(*enemiesIt, leftEndOfView, rightEndOfView);
             enemyLifeHandler(*enemiesIt);
             enemyAttackHandler(*enemiesIt);
+            enemyCollisionHandler(*enemiesIt, playerSpriteSize, enemySpriteSie, emenySpriteHeight);
             (*enemiesIt)->update(elapsedTime, elapsedClock);
             (*enemiesIt)->draw(window, deltaTime);
+            Enemy *e = *enemiesIt;
             if (e->isWounded && ((*enemiesIt)->position.x < leftEndOfView || (*enemiesIt)->position.x > rightEndOfView))
             {
                 enemiesIt = enemies.erase(enemiesIt);
@@ -82,17 +86,15 @@ class GameManager
         }
     }
 
-    void bulletsUpdate(RenderWindow &window, sf::View &view, Enemy *enemy)
+    void bulletsUpdate(RenderWindow &window, sf::View &view, Enemy *enemy, int playerSpriteSize, int enemySpriteSie)
     {
-        int playerSpriteSize = fabs(player.animationManager.getCurrentSpriteSize());
-        int enemySpriteSie = fabs(enemy->getAnimationManager()->getCurrentSpriteSize());
         for (bulletsIt = bullets.begin(); bulletsIt != bullets.end(); bulletsIt++)
         {
-            Bullet *b = *bulletsIt;
             (*bulletsIt)->update(deltaTime, window, view);
             (*bulletsIt)->draw(window);
             playerHitHandler(*bulletsIt, playerSpriteSize);
             enemyHitHandler(enemy, *bulletsIt, enemySpriteSie);
+            Bullet *b = *bulletsIt;
             if (!b->isAlive)
             {
                 bulletsIt = bullets.erase(bulletsIt);
@@ -103,7 +105,7 @@ class GameManager
 
     void playerHitHandler(Bullet *bullet, int playerSpriteSize)
     {
-        if (bullet->position.x >= player.position.x && bullet->position.x <= player.position.x + playerSpriteSize)
+        if (bullet->position.x >= player.position.x && bullet->position.x <= player.position.x + playerSpriteSize && player.position.y > bullet->position.y)
         {
             if (player.underAttack && player.isReflecting() && !bullet->isReflected)
             {
@@ -123,6 +125,29 @@ class GameManager
         {
             enemy->isWounded = true;
             bullet->isAlive = false;
+        }
+    }
+
+    void enemyCollisionHandler(Enemy *enemy, int playerSpriteSize, int enemySpriteSie, int emenySpriteHeight)
+    {
+        if (isLeftColission(enemy, playerSpriteSize) | isRightColission(enemy, enemySpriteSie) && isTopColission(enemy, emenySpriteHeight) && !enemy->isWounded)
+        {
+            if (player.flip && player.ableToMoveRight)
+            {
+                player.ableToMoveLeft = false;
+                enemy->onColission = true;
+            }
+            if (!player.flip && player.ableToMoveLeft)
+            {
+                player.ableToMoveRight = false;
+                enemy->onColission = true;
+            }
+        }
+        else if (enemy->onColission)
+        {
+            player.ableToMoveLeft = true;
+            player.ableToMoveRight = true;
+            enemy->onColission = false;
         }
     }
 
@@ -188,6 +213,21 @@ class GameManager
     bool inRightAttackDistance(Enemy *enemy)
     {
         return player.position.x - PlayerConfig::ATTACK_DISTANCE <= enemy->position.x && player.position.x > enemy->position.x;
+    }
+
+    bool isTopColission(Enemy *enemy, int emenySpriteHeight)
+    {
+        return player.position.y > enemy->position.y - emenySpriteHeight;
+    }
+
+    bool isLeftColission(Enemy *enemy, int playerSpriteSize)
+    {
+        return enemy->position.x >= player.position.x && enemy->position.x <= player.position.x + playerSpriteSize;
+    }
+
+    bool isRightColission(Enemy *enemy, int enemySpriteSie)
+    {
+        return player.position.x >= enemy->position.x && player.position.x <= enemy->position.x + enemySpriteSie;
     }
 };
 

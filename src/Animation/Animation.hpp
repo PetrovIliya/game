@@ -36,6 +36,11 @@ class Animation
         return sprite.getTextureRect().width;
     }
 
+    int getSpriteHeight()
+    {
+        return sprite.getTextureRect().height;
+    }
+
     int getQuantityOfFrames()
     {
         return frames.size();
