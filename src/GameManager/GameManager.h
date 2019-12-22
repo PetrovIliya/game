@@ -100,7 +100,6 @@ class GameManager
         {
             paused = true;
             wasPaused = true;
-            deltaClock.restart();
         }
     }
 
