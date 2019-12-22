@@ -16,47 +16,69 @@ class GameManager
   public:
     GameManager()
     {
-        telekinesisSpeed = 0.2f;
         level.LoadFromFile("maps/dantuinMap.tmx");
+        tileWidth = level.tileWidth;
         Player player(jediTexture, level.GetObjects("ground"));
         GameManager::player = player;
-        addClone(cloneTexture, level.GetObjects("ground"), {500, 448});
-        addClone(cloneTexture, level.GetObjects("ground"), {900, 448});
-        addClone(cloneTexture, level.GetObjects("ground"), {1300, 448});
-        mapOffset = 0;
+        mapOffset = enemyCount = 0;
     }
 
     void update(sf::RenderWindow &window, sf::View &view)
     {
+        int leftEndOfView = view.getCenter().x - (window.getSize().x / 2);
+        int rightEndOfView = view.getCenter().x + (window.getSize().x / 2);
         elapsedTime = elapsedClock.getElapsedTime().asSeconds();
+        enemyTime = enemyClock.getElapsedTime().asSeconds();
         deltaTime = deltaClock.restart().asMicroseconds() / 1000;
+        enemyGeneration(rightEndOfView, leftEndOfView);
         setMapOffset(view);
         level.Draw(window, mapOffset);
         player.setView(view, level.GetWindowWidth(), level.tileWidth);
-        enemiesUpdate(window, view);
+        enemiesUpdate(window, view, rightEndOfView, leftEndOfView);
         player.update(deltaTime, window);
     }
 
   private:
-    int mapOffset;
+    int mapOffset, tileWidth, enemyCount;
     Texture jediTexture, cloneTexture;
-    sf::Clock deltaClock, elapsedClock;
-    float deltaTime, elapsedTime, currentEnemyFrame, telekinesisSpeed;
+    sf::Clock deltaClock, elapsedClock, enemyClock;
+    float deltaTime, elapsedTime, enemyTime, currentEnemyFrame;
     Player player;
     Level level;
     std::list<Enemy *> enemies;
     std::list<Enemy *>::iterator enemiesIt;
+    std::list<Enemy *>::iterator enemiesIt2;
     std::list<Bullet *> bullets;
     std::list<Bullet *>::iterator bulletsIt;
 
-    void setMapOffset(sf::View &view)
+    void enemyGeneration(int rightEndOfView, int leftEndOfView)
     {
-        mapOffset = (view.getCenter().x - WindowConfig::WINDOW_WIDTH / 2) / 16;
+        if (enemyTime >= 5)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Vector2f newPosition = {float(rightEndOfView + i * 200), 448};
+                addClone(cloneTexture, newPosition, enemyCount, true);
+                enemyCount++;
+            }
+            for (int i = 0; i < 3; i++)
+            {
+                Vector2f newPosition = {float(leftEndOfView - i * 200), 448};
+                addClone(cloneTexture, newPosition, enemyCount, false);
+                enemyCount++;
+            }
+            enemyClock.restart();
+        }
     }
 
-    void addClone(Texture &cloneTexture, vector<Object> GroundObjects, sf::Vector2f position)
+    void setMapOffset(sf::View &view)
     {
-        enemies.push_back(new Clone(cloneTexture, GroundObjects, position));
+        mapOffset = (view.getCenter().x - WindowConfig::WINDOW_WIDTH / 2) / tileWidth;
+    }
+
+    void addClone(Texture &cloneTexture, sf::Vector2f position, int id, bool flip)
+    {
+        enemies.push_back(new Clone(cloneTexture, position, id, flip));
     }
 
     void addBullet(Vector2f position, bool isEnemyFlip)
@@ -69,21 +91,20 @@ class GameManager
         bullets.push_back(new Bullet(position, isEnemyFlip));
     }
 
-    void enemiesUpdate(RenderWindow &window, sf::View &view)
+    void enemiesUpdate(RenderWindow &window, sf::View &view, int rightEndOfView, int leftEndOfView)
     {
-        int leftEndOfView = view.getCenter().x - (window.getSize().x / 2);
-        int rightEndOfView = view.getCenter().x + (window.getSize().x / 2);
         for (enemiesIt = enemies.begin(); enemiesIt != enemies.end(); enemiesIt++)
         {
             int emenySpriteHeight = (*enemiesIt)->getCurrentSpriteHeight();
             int playerSpriteSize = fabs(player.getCurrentSpriteSize());
             int enemySpriteSie = fabs((*enemiesIt)->getCurrentSpriteSize());
+            enemyEnemyColissionHandler(*enemiesIt, enemySpriteSie);
             bulletsUpdate(window, view, (*enemiesIt), playerSpriteSize, enemySpriteSie);
-            eneymyStasisHandler(*enemiesIt, leftEndOfView, rightEndOfView);
+            enemyStasisHandler(*enemiesIt, leftEndOfView, rightEndOfView);
             enemyLifeHandler(*enemiesIt);
             enemyAttackHandler(*enemiesIt);
-            enemyCollisionHandler(*enemiesIt, playerSpriteSize, enemySpriteSie, emenySpriteHeight);
-            (*enemiesIt)->update(elapsedTime, elapsedClock);
+            enemyPlayerCollisionHandler(*enemiesIt, playerSpriteSize, enemySpriteSie, emenySpriteHeight);
+            (*enemiesIt)->update(elapsedTime, elapsedClock, deltaTime, player.position.x);
             (*enemiesIt)->draw(window, deltaTime);
             Enemy *e = *enemiesIt;
             if (e->isWounded && ((*enemiesIt)->position.x < leftEndOfView || (*enemiesIt)->position.x > rightEndOfView))
@@ -136,7 +157,7 @@ class GameManager
         }
     }
 
-    void enemyCollisionHandler(Enemy *enemy, int playerSpriteSize, int enemySpriteSie, int emenySpriteHeight)
+    void enemyPlayerCollisionHandler(Enemy *enemy, int playerSpriteSize, int enemySpriteSie, int emenySpriteHeight)
     {
         if (isLeftColission(enemy, playerSpriteSize) | isRightColission(enemy, enemySpriteSie) && isTopColission(enemy, emenySpriteHeight) && !enemy->isWounded)
         {
@@ -159,7 +180,28 @@ class GameManager
         }
     }
 
-    void eneymyStasisHandler(Enemy *enemy, int leftEndOfView, int rightEndOfView)
+    void enemyEnemyColissionHandler(Enemy *enemy, int enemySpriteSie)
+    {
+        for (enemiesIt2 = enemies.begin(); enemiesIt2 != enemies.end(); enemiesIt2++)
+        {
+            if (enemy->id == (*enemiesIt2)->id)
+            {
+                continue;
+            }
+            if (enemy->position.x >= (*enemiesIt2)->position.x && enemy->position.x <= (*enemiesIt2)->position.x + enemySpriteSie)
+            {
+                enemy->ableToMoveLeft = false;
+                (*enemiesIt2)->ableToMoveRight = false;
+            }
+            else
+            {
+                enemy->ableToMoveLeft = true;
+                (*enemiesIt2)->ableToMoveRight = true;
+            }
+        }
+    }
+
+    void enemyStasisHandler(Enemy *enemy, int leftEndOfView, int rightEndOfView)
     {
         if (enemy->position.x > leftEndOfView && enemy->position.x < rightEndOfView && !enemy->isWounded)
         {
@@ -220,7 +262,7 @@ class GameManager
 
     bool inRightAttackDistance(Enemy *enemy)
     {
-        return player.position.x - PlayerConfig::ATTACK_DISTANCE <= enemy->position.x && player.position.x > enemy->position.x;
+        return player.position.x - PlayerConfig::ATTACK_DISTANCE - 5 <= enemy->position.x && player.position.x > enemy->position.x;
     }
 
     bool isTopColission(Enemy *enemy, int emenySpriteHeight)

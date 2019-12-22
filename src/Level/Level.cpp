@@ -271,7 +271,7 @@ int Level::GetWindowWidth()
 void Level::Draw(RenderWindow &window, int mapOffset)
 {
     int quantityOfActiveTilesX = window.getSize().x / tileWidth;
-    int quantityOfSafeRects = 20;
+    int quantityOfSafeRects = 5;
     int x, y = 0;
 
     for (unsigned int layer = 0; layer < layers.size() - 1; layer++)

@@ -6,7 +6,7 @@ class AnimConfig
 public:
   static const int MID_MOVING_FRAME = 3;
   static const int END_MOVING_FRAME = 6;
-  static const int JUMP_HEIGHT = 70;
+  static const int JUMP_HEIGHT = 80;
   inline static const sf::String WALK_ANIMATION = "walk";
   inline static const sf::String ATTACK_ANIMATION = "attack";
   inline static const sf::String STAY_ANIMATION = "stay";

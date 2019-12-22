@@ -7,22 +7,21 @@
 class Enemy
 {
   public:
-    bool isAttack, flip, onGround, onJump, canMove, isWounded, isTraped, isFlalling, onColission;
+    bool isAttack, flip, onGround, onJump, canMove, isWounded, isTraped, isFlalling, onColission, ableToMoveRight, ableToMoveLeft, needRestart;
     sf::Vector2f position;
-    vector<Object> groundObjects;
-    Object mainGroundObject;
+    int id;
 
-    Enemy(vector<Object> GroundObjects, sf::Vector2f Position)
+    Enemy(sf::Vector2f Position, int id)
     {
-        initObjects(GroundObjects);
+        Enemy::id = id;
         position = Position;
         isAttack = onGround = onJump = isWounded = isTraped = isFlalling = onColission = false;
-        canMove, flip = true;
+        canMove = flip = ableToMoveRight = ableToMoveLeft = needRestart = true;
     }
 
     virtual void draw(sf::RenderWindow &window, float time) = 0;
 
-    virtual void update(float elapsedTime, sf::Clock &elapsedClock) = 0;
+    virtual void update(float elapsedTime, sf::Clock &elapsedClock, float deltaTime, int playerPosition) = 0;
 
     virtual AnimationManager *getAnimationManager() = 0;
 
@@ -32,6 +31,8 @@ class Enemy
 
     virtual int getCurrentSpriteHeight() = 0;
 
+    virtual bool isMoving() = 0;
+
     void setIsAttack(bool isAttack)
     {
         Enemy::isAttack = isAttack;
@@ -40,19 +41,6 @@ class Enemy
     sf::Vector2f getPosition()
     {
         return position;
-    }
-
-    void initObjects(vector<Object> GroundObjects)
-    {
-        groundObjects = GroundObjects;
-        for (int i = 0; i < groundObjects.size(); i++)
-        {
-            if (groundObjects[i].type == "main")
-            {
-                mainGroundObject = groundObjects[i];
-                break;
-            }
-        }
     }
 
   private:

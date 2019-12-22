@@ -56,7 +56,6 @@ class Player
         animationManager.setPosition(position);
         animationManager.tick(time);
         animationManager.draw(window);
-        lastPosition = position;
     }
 
     void setView(sf::View &view, int realWindowWidth, int tileWidth)

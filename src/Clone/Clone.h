@@ -10,12 +10,13 @@ class Clone : public Enemy
   public:
     AnimationManager animationManager;
 
-    Clone(Texture &cloneTexture, vector<Object> GroundObjects, sf::Vector2f Position) : Enemy::Enemy(GroundObjects, Position)
+    Clone(Texture &cloneTexture, sf::Vector2f Position, int id, bool flip) : Enemy::Enemy(Position, id)
     {
         if (!cloneTexture.loadFromFile(AnimConfig::CLONE_TEXTURE_PATH))
         {
             std::exit(0);
         }
+        Enemy::flip = flip;
         animationManager.loadFromXml(AnimConfig::CLONE_ANIMS_PATH, cloneTexture);
         animationManager.setPosition(position);
         animationManager.set(AnimConfig::STAY_ANIMATION);
@@ -39,9 +40,12 @@ class Clone : public Enemy
         return &animationManager;
     }
 
-    void update(float elapsedTime, sf::Clock &elapsedClock)
+    void update(float elapsedTime, sf::Clock &elapsedClock, float deltaTime, int playerPosition)
     {
-        attackAndLifeHandler();
+        moveHandler(playerPosition, deltaTime);
+        animationManager.setPosition(position);
+        attackHandler();
+        lifeHandler();
         stasisHandler(elapsedTime, elapsedClock);
     }
 
@@ -55,17 +59,46 @@ class Clone : public Enemy
         return animationManager.getCurrentSpriteHeight();
     }
 
+    bool isMoving()
+    {
+        return animationManager.getCurrentAnimationName() == AnimConfig::WALK_ANIMATION;
+    }
+
   private:
-    void attackAndLifeHandler()
+    void moveHandler(float playerPosition, float time)
+    {
+        if (playerPosition < position.x && !isWounded && ableToMoveLeft)
+        {
+            if (position.x - playerPosition > EnemyConfig::VIEW_DISTANCE)
+            {
+                animationManager.set(AnimConfig::WALK_ANIMATION);
+                position.x -= time * 0.3;
+            }
+        }
+        else if (!isWounded && ableToMoveRight)
+        {
+            if (playerPosition - position.x > EnemyConfig::VIEW_DISTANCE)
+            {
+                animationManager.set(AnimConfig::WALK_ANIMATION);
+                position.x += time * 0.3;
+            }
+        }
+    }
+
+    void attackHandler()
     {
         if (isAttack && !isWounded && !isTraped)
         {
             setAnimation(AnimConfig::ATTACK_ANIMATION);
         }
-        else if (!isWounded && !isTraped)
+        else if (!isWounded && !isTraped && !isMoving())
         {
             setAnimation(AnimConfig::STAY_ANIMATION);
         }
+    }
+
+    void lifeHandler()
+    {
         if (isWounded && !isFlalling())
         {
             setAnimation(AnimConfig::FALL_ANIMATION);
@@ -80,6 +113,11 @@ class Clone : public Enemy
     {
         if (isTraped)
         {
+            if (needRestart)
+            {
+                elapsedClock.restart();
+                needRestart = false;
+            }
             if (animationManager.isLastFrame())
             {
                 animationManager.pause();
@@ -87,6 +125,7 @@ class Clone : public Enemy
             if (elapsedTime >= EnemyConfig::STASIS_TIME)
             {
                 isTraped = false;
+                needRestart = true;
                 elapsedClock.restart();
             }
         }
