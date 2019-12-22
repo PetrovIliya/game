@@ -268,9 +268,36 @@ int Level::GetWindowWidth()
     return width * tileWidth;
 }
 
-void Level::Draw(RenderWindow &window)
+void Level::Draw(RenderWindow &window, int mapOffset)
 {
-    for (unsigned int layer = 0; layer < layers.size(); layer++)
-        for (unsigned int tile = 0; tile < layers[layer].tiles.size(); tile++)
-            window.draw(layers[layer].tiles[tile]);
+    int quantityOfActiveTilesX = window.getSize().x / tileWidth;
+    int quantityOfSafeRects = 20;
+    int x, y = 0;
+
+    for (unsigned int layer = 0; layer < layers.size() - 1; layer++)
+    {
+        int tileNumber = 0;
+        for (unsigned int tile = mapOffset; tile < layers[layer].tiles.size(); ++tile)
+        {
+            if (tileNumber == quantityOfActiveTilesX + quantityOfSafeRects)
+            {
+                tileNumber = 0;
+                tile += width - (quantityOfActiveTilesX + quantityOfSafeRects);
+            }
+            if (tile < layers[layer].tiles.size())
+            {
+                window.draw(layers[layer].tiles[tile]);
+            }
+
+            tileNumber++;
+        }
+    }
+
+    for (unsigned int tile = 0; tile < layers[2].tiles.size(); ++tile)
+    {
+        if (tile < layers[2].tiles.size())
+        {
+            window.draw(layers[2].tiles[tile]);
+        }
+    }
 }

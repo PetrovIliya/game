@@ -32,7 +32,7 @@ class Level
     bool LoadFromFile(string filename);
     Object GetObject(string name);
     vector<Object> GetObjects(string name);
-    void Draw(RenderWindow &window);
+    void Draw(RenderWindow &window, int mapOffset);
     int GetWindowWidth();
     Vector2i GetTileSize();
     int columns;

@@ -28,7 +28,7 @@
   <cut w="32" x="620" y="268" h="68" row="1" col="1"/>
   <cut w="32" x="654" y="268" h="68" row="1" col="1"/>
  </animation>
- <animation title="jump" delay="20">
+ <animation title="jump" delay="50">
   <cut w="32" x="472" y="4140" h="67" row="1" col="1"/>
   <cut w="32" x="506" y="4140" h="67" row="1" col="1"/>
   <cut w="32" x="540" y="4140" h="67" row="1" col="1"/>

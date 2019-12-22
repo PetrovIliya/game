@@ -20,22 +20,25 @@ class GameManager
         level.LoadFromFile("maps/dantuinMap.tmx");
         Player player(jediTexture, level.GetObjects("ground"));
         GameManager::player = player;
-        addClone(cloneTexture, level.GetObjects("ground"), {500, 433});
-        addClone(cloneTexture, level.GetObjects("ground"), {900, 433});
-        addClone(cloneTexture, level.GetObjects("ground"), {1300, 433});
+        addClone(cloneTexture, level.GetObjects("ground"), {500, 448});
+        addClone(cloneTexture, level.GetObjects("ground"), {900, 448});
+        addClone(cloneTexture, level.GetObjects("ground"), {1300, 448});
+        mapOffset = 0;
     }
 
     void update(sf::RenderWindow &window, sf::View &view)
     {
         elapsedTime = elapsedClock.getElapsedTime().asSeconds();
         deltaTime = deltaClock.restart().asMicroseconds() / 1000;
-        level.Draw(window);
+        setMapOffset(view);
+        level.Draw(window, mapOffset);
         player.setView(view, level.GetWindowWidth(), level.tileWidth);
         enemiesUpdate(window, view);
         player.update(deltaTime, window);
     }
 
   private:
+    int mapOffset;
     Texture jediTexture, cloneTexture;
     sf::Clock deltaClock, elapsedClock;
     float deltaTime, elapsedTime, currentEnemyFrame, telekinesisSpeed;
@@ -45,6 +48,11 @@ class GameManager
     std::list<Enemy *>::iterator enemiesIt;
     std::list<Bullet *> bullets;
     std::list<Bullet *>::iterator bulletsIt;
+
+    void setMapOffset(sf::View &view)
+    {
+        mapOffset = (view.getCenter().x - WindowConfig::WINDOW_WIDTH / 2) / 16;
+    }
 
     void addClone(Texture &cloneTexture, vector<Object> GroundObjects, sf::Vector2f position)
     {
@@ -222,12 +230,12 @@ class GameManager
 
     bool isLeftColission(Enemy *enemy, int playerSpriteSize)
     {
-        return enemy->position.x >= player.position.x && enemy->position.x <= player.position.x + playerSpriteSize;
+        return enemy->position.x >= player.position.x && enemy->position.x <= player.position.x + playerSpriteSize | player.position.x <= 0;
     }
 
     bool isRightColission(Enemy *enemy, int enemySpriteSie)
     {
-        return player.position.x >= enemy->position.x && player.position.x <= enemy->position.x + enemySpriteSie;
+        return player.position.x >= enemy->position.x && player.position.x <= enemy->position.x + enemySpriteSie | player.position.x >= 16000;
     }
 };
 
