@@ -41,7 +41,6 @@ class GameManager
             {
                 deltaTime = elapsedTime = enemyTime = 0;
             }
-            std::cout << deltaTime << std::endl;
             enemyGeneration(rightEndOfView, leftEndOfView);
             setMapOffset(view);
             level.Draw(window, mapOffset);
