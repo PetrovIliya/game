@@ -69,6 +69,6 @@ add_executable(
                   src/Level/Level.cpp src/Level/Level.h 
                   src/Enemy/Enemy.cpp src/Enemy/Enemy.h 
                   src/Bullet/Bullet.cpp src/Bullet/Bullet.h
-                  src/Clone/Clone.cpp src/Clone/Clone.h src/GameManager/GameManager.cpp src/GameManager/GameManager.h)
+                  src/Clone/Clone.cpp src/Clone/Clone.h src/GameManager/GameManager.cpp src/GameManager/GameManager.h src/Screen/Screen.h src/Menu/Menu.cpp src/Menu/Menu.h src/Game/Game.cpp src/Game/Game.h)
 
 target_link_libraries(game ${SFML_LIBRARIES} ${SFML_DEPENDENCIES} tinyXML )

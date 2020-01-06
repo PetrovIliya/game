@@ -10,8 +10,9 @@
 #include "../Enemy/Enemy.h"
 #include "../Clone/Clone.h"
 #include "../../config/EnemyConfig.cpp"
+#include "../Screen/Screen.h"
 
-class GameManager
+class GameManager : public Screen
 {
   public:
     GameManager()
@@ -26,29 +27,23 @@ class GameManager
 
     void update(sf::RenderWindow &window, sf::View &view)
     {
-
-        if (!paused)
+        int leftEndOfView = view.getCenter().x - (window.getSize().x / 2);
+        int rightEndOfView = view.getCenter().x + (window.getSize().x / 2);
+        elapsedTime = elapsedClock.getElapsedTime().asSeconds();
+        enemyTime = enemyClock.getElapsedTime().asSeconds();
+        dletaTimeRestart();
+        if (needToReset)
         {
-            pollEvents(window);
-
-            window.clear(Color::White);
-            int leftEndOfView = view.getCenter().x - (window.getSize().x / 2);
-            int rightEndOfView = view.getCenter().x + (window.getSize().x / 2);
-            elapsedTime = elapsedClock.getElapsedTime().asSeconds();
-            enemyTime = enemyClock.getElapsedTime().asSeconds();
-            deltaTime = deltaClock.restart().asMicroseconds() / 1000;
-            if (wasPaused)
-            {
-                deltaTime = elapsedTime = enemyTime = 0;
-            }
-            enemyGeneration(rightEndOfView, leftEndOfView);
-            setMapOffset(view);
-            level.Draw(window, mapOffset);
-            player.setView(view, level.GetWindowWidth(), level.tileWidth);
-            enemiesUpdate(window, view, rightEndOfView, leftEndOfView);
-            player.update(deltaTime, window);
-            wasPaused = false;
+            resetTime();
+            needToReset = false;
         }
+        enemyGeneration(rightEndOfView, leftEndOfView);
+        setMapOffset(view);
+        level.Draw(window, mapOffset);
+        player.setView(view, level.GetWindowWidth(), level.tileWidth);
+        enemiesUpdate(window, view, rightEndOfView, leftEndOfView);
+        player.update(deltaTime, window);
+        wasPaused = false;
     }
 
     void setPaused(bool paused)
@@ -56,8 +51,12 @@ class GameManager
         GameManager::paused = paused;
     }
 
+    void resetTime()
+    {
+        deltaTime = elapsedTime = enemyTime = 0;
+    }
+
   private:
-    sf::Event event;
     bool paused, wasPaused;
     int mapOffset, tileWidth, enemyCount;
     Texture jediTexture, cloneTexture;
@@ -70,37 +69,6 @@ class GameManager
     std::list<Enemy *>::iterator enemiesIt2;
     std::list<Bullet *> bullets;
     std::list<Bullet *>::iterator bulletsIt;
-
-    void pollEvents(sf::RenderWindow &window)
-    {
-        while (window.pollEvent(event) || paused)
-        {
-            switch (event.type)
-            {
-            case sf::Event::Closed:
-                window.close();
-                break;
-            case sf::Event::KeyPressed:
-                pauseHandler();
-                break;
-            default:
-                break;
-            }
-        }
-    }
-
-    pauseHandler()
-    {
-        if (event.key.code == sf::Keyboard::Escape)
-        {
-            paused = false;
-        }
-        if (event.key.code == sf::Keyboard::Escape && !paused && !wasPaused)
-        {
-            paused = true;
-            wasPaused = true;
-        }
-    }
 
     void enemyGeneration(int rightEndOfView, int leftEndOfView)
     {
@@ -140,7 +108,7 @@ class GameManager
     {
         for (enemiesIt = enemies.begin(); enemiesIt != enemies.end(); enemiesIt++)
         {
-            int emenySpriteHeight = (*enemiesIt)->getCurrentSpriteHeight();
+            int enemySpriteHeight = (*enemiesIt)->getCurrentSpriteHeight();
             int playerSpriteSize = fabs(player.getCurrentSpriteSize());
             int enemySpriteSie = fabs((*enemiesIt)->getCurrentSpriteSize());
             enemyEnemyColissionHandler(*enemiesIt, enemySpriteSie);
@@ -148,7 +116,7 @@ class GameManager
             enemyStasisHandler(*enemiesIt, leftEndOfView, rightEndOfView);
             enemyLifeHandler(*enemiesIt);
             enemyAttackHandler(*enemiesIt);
-            enemyPlayerCollisionHandler(*enemiesIt, playerSpriteSize, enemySpriteSie, emenySpriteHeight);
+            enemyPlayerCollisionHandler(*enemiesIt, playerSpriteSize, enemySpriteSie, enemySpriteHeight);
             (*enemiesIt)->update(elapsedTime, elapsedClock, deltaTime, player.position.x);
             (*enemiesIt)->draw(window, deltaTime);
             Enemy *e = *enemiesIt;
@@ -293,6 +261,11 @@ class GameManager
         {
             enemy->setIsAttack(false);
         }
+    }
+
+    void dletaTimeRestart()
+    {
+        deltaTime = deltaClock.restart().asMicroseconds() / 1000;
     }
 
     bool isEnemyHited(Enemy *enemy, Bullet *bullet, int enemySpriteSie)
