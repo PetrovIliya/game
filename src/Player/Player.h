@@ -5,6 +5,8 @@
 #include "../Level/Level.h"
 #include "../../config/WindowConfig.hpp"
 #include "../../config/PlayerConfig.cpp"
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -18,9 +20,27 @@ class Player
     Object mainGroundObject;
     sf::Clock elapsedClock;
     float elapsedTime;
+    sf::Text playerScore;
+    int score = 0;
+    std::string record = "0";
 
-    Player(Texture &jediTexture, vector<Object> GroundObjects)
+
+    Player(Texture &jediTexture, vector<Object> GroundObjects, sf::Text playerScore)
     {
+        ifstream fileIn;
+        ofstream fileOut;
+        fileIn.open("record.txt");
+        if (!fileIn)
+        {
+            createFile();
+            fileIn.open("record.txt");
+        }
+        if (fileIn.peek() != EOF)
+        {
+            fileIn >> record;
+            fileIn.close();
+        }
+        Player::playerScore = playerScore;
         initObjects(GroundObjects);
         position = {100, (float)mainGroundObject.rect.top};
         attack = onGround = onJump = keyPressed = onCoolDown = false;
@@ -38,12 +58,12 @@ class Player
     {
     }
 
-    void update(float time, sf::RenderWindow &window)
+    void update(float time, sf::RenderWindow &window, int leftEndOfView)
     {
         elapsedTime = elapsedClock.getElapsedTime().asSeconds();
         keyPressed = false;
         onGround = position.y >= (float)mainGroundObject.rect.top;
-        coolDowndHandler();
+        coolDownHandler();
         lifeHandler();
         moveHandler(time);
         jumpHandler(time);
@@ -56,6 +76,16 @@ class Player
         animationManager.setPosition(position);
         animationManager.tick(time);
         animationManager.draw(window);
+        scoreHandler(leftEndOfView);
+        window.draw(playerScore);
+    }
+
+    scoreHandler(int leftEndOfView)
+    {
+        playerScore.setPosition({leftEndOfView + 50, 50});
+        std::ostringstream playerScoreString;
+        playerScoreString << score;
+        playerScore.setString("your score: " + playerScoreString.str() + "  record: " + record);
     }
 
     void setView(sf::View &view, int realWindowWidth, int tileWidth)
@@ -72,7 +102,14 @@ class Player
         elapsedClock.restart();
     }
 
-    void coolDowndHandler()
+
+    void createFile()
+    {
+        ofstream outFile("record.txt");
+        outFile.close();
+    }
+
+    void coolDownHandler()
     {
         if (onCoolDown && elapsedTime >= PlayerConfig::STASIS_COOLDOWN)
         {
@@ -116,7 +153,17 @@ class Player
         animationManager.getCurrentSpriteSize();
     }
 
-  private:
+    void recordHandler()
+    {
+        if (score > std::stoi(record))
+        {
+            ofstream outFile("record.txt", ios_base::trunc);
+            outFile << score;
+        }
+    }
+
+
+private:
     void initObjects(vector<Object> GroundObjects)
     {
         groundObjects = GroundObjects;
@@ -135,6 +182,7 @@ class Player
         if (!isAlive)
         {
             setFallAnimation();
+            recordHandler();
         }
     }
 

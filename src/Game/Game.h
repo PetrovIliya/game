@@ -13,7 +13,9 @@
 class Game
 {
 public:
-    Game();
+    sf::Text playerScore;
+
+    Game(sf::Text text);
 
     void start(sf::RenderWindow &window, sf::View &view);
 

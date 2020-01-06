@@ -15,11 +15,12 @@
 class GameManager : public Screen
 {
   public:
-    GameManager()
+
+    GameManager(sf::Text playerScore)
     {
         level.LoadFromFile("maps/dantuinMap.tmx");
         tileWidth = level.tileWidth;
-        Player player(jediTexture, level.GetObjects("ground"));
+        Player player(jediTexture, level.GetObjects("ground"), playerScore);
         GameManager::player = player;
         mapOffset = enemyCount = 0;
         paused = wasPaused = false;
@@ -42,7 +43,7 @@ class GameManager : public Screen
         level.Draw(window, mapOffset);
         player.setView(view, level.GetWindowWidth(), level.tileWidth);
         enemiesUpdate(window, view, rightEndOfView, leftEndOfView);
-        player.update(deltaTime, window);
+        player.update(deltaTime, window, leftEndOfView);
         wasPaused = false;
     }
 
@@ -54,6 +55,11 @@ class GameManager : public Screen
     void resetTime()
     {
         deltaTime = elapsedTime = enemyTime = 0;
+    }
+
+    Player getPlayer()
+    {
+        return player;
     }
 
   private:
@@ -165,6 +171,7 @@ class GameManager : public Screen
     {
         if (isEnemyHited(enemy, bullet, enemySpriteSie))
         {
+            player.score++;
             enemy->isWounded = true;
             bullet->isAlive = false;
         }
@@ -232,6 +239,7 @@ class GameManager : public Screen
         {
             if ((inRightAttackDistance(enemy) && player.isAttack() && !enemy->isWounded))
             {
+                player.score += 5;
                 enemy->isWounded = true;
             }
         }
@@ -239,6 +247,7 @@ class GameManager : public Screen
         {
             if (inLeftAttackDistance(enemy) && player.isAttack() && !enemy->isWounded)
             {
+                player.score += 5;
                 enemy->isWounded = true;
             }
         }

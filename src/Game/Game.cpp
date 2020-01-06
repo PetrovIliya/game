@@ -1,10 +1,11 @@
 #include "Game.h"
 
-Game::Game()
+Game::Game(sf::Text playerScore)
 {
+    Game::playerScore = playerScore;
     enter = false;
     currentScreen = "menu";
-    screens["game"] = new GameManager();
+    screens["game"] = new GameManager(Game::playerScore);
     screens["menu"] = &menu;
 }
 
@@ -52,12 +53,14 @@ void Game::choseHandler(sf::RenderWindow &window, sf::View &view)
         }
         if(menu.activeSpriteIndex == 1)
         {
-            screens["game"] = new GameManager();
+            screens["game"] = new GameManager(Game::playerScore);
+            Game::screens["game"]->getPlayer().recordHandler();
             currentScreen = "game";
             view.setCenter(WindowConfig::WINDOW_WIDTH / 2, WindowConfig::WINDOW_HEIGHT / 2);
         }
         if(menu.activeSpriteIndex == 2)
         {
+            Game::screens["game"]->getPlayer().recordHandler();
             window.close();
         }
     }

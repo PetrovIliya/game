@@ -69,7 +69,7 @@ class Clone : public Enemy
     {
         if (playerPosition < position.x && !isWounded && ableToMoveLeft)
         {
-            if (position.x - playerPosition > EnemyConfig::VIEW_DISTANCE)
+            if (position.x - playerPosition > EnemyConfig::VIEW_DISTANCE && !isTraped)
             {
                 animationManager.set(AnimConfig::WALK_ANIMATION);
                 position.x -= time * 0.3;
@@ -77,7 +77,7 @@ class Clone : public Enemy
         }
         else if (!isWounded && ableToMoveRight)
         {
-            if (playerPosition - position.x > EnemyConfig::VIEW_DISTANCE)
+            if (playerPosition - position.x > EnemyConfig::VIEW_DISTANCE && !isTraped)
             {
                 animationManager.set(AnimConfig::WALK_ANIMATION);
                 position.x += time * 0.3;
