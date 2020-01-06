@@ -16,10 +16,19 @@ void Game::start(sf::RenderWindow &window, sf::View &view)
     {
         pollEvents(window);
         choseHandler(window, view);
+        playerDeathHandler();
         window.clear(Color::White);
         window.setView(view);
         screens[currentScreen]->update(window, view);
         window.display();
+    }
+}
+
+void Game::playerDeathHandler()
+{
+    if (!screens["game"]->getPlayer().isAlive)
+    {
+        currentScreen = "menu";
     }
 }
 
@@ -47,7 +56,7 @@ void Game::choseHandler(sf::RenderWindow &window, sf::View &view)
     if (enter)
     {
         enter = false;
-        if(menu.activeSpriteIndex == 0)
+        if(menu.activeSpriteIndex == 0 && screens["game"]->getPlayer().isAlive)
         {
             currentScreen = "game";
         }

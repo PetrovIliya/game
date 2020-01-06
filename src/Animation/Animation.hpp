@@ -15,67 +15,21 @@ class Animation
     bool flip = false, isPlaying = true;
     Sprite sprite;
 
-    Animation(String Name, Texture &texture, int quantity, float Speed, int x, int y, float step, int width, int height)
-    {
-        name = Name;
-        speed = Speed;
-        sprite.setTexture(texture);
-        for (int i = 0; i < quantity; i++)
-        {
-            frames.push_back(IntRect(i * step + x, y, width, height));
-            frames_flip.push_back(IntRect(i * step + width + x, y, -width, height));
-        }
-    }
+    Animation(String Name, Texture &texture, int quantity, float Speed, int x, int y, float step, int width, int height);
 
-    Animation()
-    {
-    }
+    Animation();
 
-    int getSpriteSize()
-    {
-        return sprite.getTextureRect().width;
-    }
+    int getSpriteSize();
 
-    int getSpriteHeight()
-    {
-        return sprite.getTextureRect().height;
-    }
+    int getSpriteHeight();
 
-    int getQuantityOfFrames()
-    {
-        return frames.size();
-    }
+    int getQuantityOfFrames();
 
-    void setOrigin(int x, int y)
-    {
-        sprite.setOrigin(x, y);
-    }
+    void setOrigin(int x, int y);
 
-    int getFrameHeight()
-    {
-        return frames[currentFrame].height;
-    }
+    int getFrameHeight();
 
-    void tick(float time)
-    {
-        if (!isPlaying)
-        {
-            return;
-        }
-        currentFrame += speed * time;
-        if (currentFrame > frames.size())
-        {
-            currentFrame -= frames.size();
-        }
-        int i = currentFrame;
-        sprite.setTextureRect(frames[i]);
-        if (flip)
-        {
-            sprite.setTextureRect(frames_flip[i]);
-        }
-    }
-
-  private:
+    void tick(float time);
 };
 
 #endif

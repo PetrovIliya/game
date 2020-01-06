@@ -22,124 +22,32 @@ class Clone : public Enemy
         animationManager.set(AnimConfig::STAY_ANIMATION);
     }
 
-    void draw(sf::RenderWindow &window, float time)
-    {
-        animationManager.flip(flip);
-        animationManager.setPosition(position);
-        animationManager.tick(time);
-        animationManager.draw(window);
-    }
+    void draw(sf::RenderWindow &window, float time);
 
-    void setCurrentAnimation(sf::String name)
-    {
-        animationManager.set(name);
-    }
+    void setCurrentAnimation(sf::String name);
 
-    AnimationManager *getAnimationManager()
-    {
-        return &animationManager;
-    }
+    AnimationManager *getAnimationManager();
 
-    void update(float elapsedTime, sf::Clock &elapsedClock, float deltaTime, int playerPosition)
-    {
-        moveHandler(playerPosition, deltaTime);
-        animationManager.setPosition(position);
-        attackHandler();
-        lifeHandler();
-        stasisHandler(elapsedTime, elapsedClock);
-    }
+    void update(float elapsedTime, sf::Clock &elapsedClock, float deltaTime, int playerPosition);
 
-    int getCurrentSpriteSize()
-    {
-        return animationManager.getCurrentSpriteSize();
-    }
+    int getCurrentSpriteSize();
 
-    int getCurrentSpriteHeight()
-    {
-        return animationManager.getCurrentSpriteHeight();
-    }
+    int getCurrentSpriteHeight();
 
-    bool isMoving()
-    {
-        return animationManager.getCurrentAnimationName() == AnimConfig::WALK_ANIMATION;
-    }
+    bool isMoving();
 
   private:
-    void moveHandler(float playerPosition, float time)
-    {
-        if (playerPosition < position.x && !isWounded && ableToMoveLeft)
-        {
-            if (position.x - playerPosition > EnemyConfig::VIEW_DISTANCE && !isTraped)
-            {
-                animationManager.set(AnimConfig::WALK_ANIMATION);
-                position.x -= time * 0.3;
-            }
-        }
-        else if (!isWounded && ableToMoveRight)
-        {
-            if (playerPosition - position.x > EnemyConfig::VIEW_DISTANCE && !isTraped)
-            {
-                animationManager.set(AnimConfig::WALK_ANIMATION);
-                position.x += time * 0.3;
-            }
-        }
-    }
+    void moveHandler(float playerPosition, float time);
 
-    void attackHandler()
-    {
-        if (isAttack && !isWounded && !isTraped)
-        {
-            setAnimation(AnimConfig::ATTACK_ANIMATION);
-        }
-        else if (!isWounded && !isTraped && !isMoving())
-        {
-            setAnimation(AnimConfig::STAY_ANIMATION);
-        }
-    }
+    void attackHandler();
 
-    void lifeHandler()
-    {
-        if (isWounded && !isFlalling())
-        {
-            setAnimation(AnimConfig::FALL_ANIMATION);
-        }
-        else if (isFlalling() && animationManager.isLastFrame())
-        {
-            animationManager.pause();
-        }
-    }
+    void lifeHandler();
 
-    void stasisHandler(float elapsedTime, sf::Clock &elapsedClock)
-    {
-        if (isTraped)
-        {
-            if (needRestart)
-            {
-                elapsedClock.restart();
-                needRestart = false;
-            }
-            if (animationManager.isLastFrame())
-            {
-                animationManager.pause();
-            }
-            if (elapsedTime >= EnemyConfig::STASIS_TIME)
-            {
-                isTraped = false;
-                needRestart = true;
-                elapsedClock.restart();
-            }
-        }
-    }
+    void stasisHandler(float elapsedTime, sf::Clock &elapsedClock);
 
-    void setAnimation(sf::String name)
-    {
-        animationManager.set(name);
-    }
+    void setAnimation(sf::String name);
 
-    bool isFlalling()
-    {
-        return animationManager.getCurrentAnimationName() == AnimConfig::FALL_ANIMATION;
-    }
+    bool isFlalling();
 };
 
 #endif

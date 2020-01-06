@@ -26,6 +26,8 @@ private:
     std::map<std::string, Screen*> screens;
     bool enter;
 
+    void playerDeathHandler();
+
     void pollEvents(sf::RenderWindow &window);
 
     void choseHandler(sf::RenderWindow &window, sf::View &view);

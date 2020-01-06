@@ -66,9 +66,16 @@ find_package(SFML 2 COMPONENTS window graphics system REQUIRED)
 
 add_executable(
                   game game.cpp
-                  src/Level/Level.cpp src/Level/Level.h 
-                  src/Enemy/Enemy.cpp src/Enemy/Enemy.h 
+                  src/Level/Level.cpp src/Level/Level.h
+                  src/Animation/Animation.cpp src/Animation/Animation.hpp
+                  src/AnimationManager/AnimationManager.cpp src/AnimationManager/AnimationManager.hpp
+                  src/Enemy/Enemy.cpp src/Enemy/Enemy.h
+                  src/Player/Player.cpp src/Player/Player.h
                   src/Bullet/Bullet.cpp src/Bullet/Bullet.h
-                  src/Clone/Clone.cpp src/Clone/Clone.h src/GameManager/GameManager.cpp src/GameManager/GameManager.h src/Screen/Screen.h src/Menu/Menu.cpp src/Menu/Menu.h src/Game/Game.cpp src/Game/Game.h)
+                  src/Clone/Clone.cpp src/Clone/Clone.h
+                  src/GameManager/GameManager.cpp src/GameManager/GameManager.h
+                  src/Screen/Screen.h
+                  src/Menu/Menu.cpp src/Menu/Menu.h
+                  src/Game/Game.cpp src/Game/Game.h src/Player/Player.cpp)
 
 target_link_libraries(game ${SFML_LIBRARIES} ${SFML_DEPENDENCIES} tinyXML )

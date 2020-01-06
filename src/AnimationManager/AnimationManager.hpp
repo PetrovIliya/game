@@ -11,136 +11,46 @@ class AnimationManager
     String currentAnim;
     std::map<String, Animation> animList;
 
-    void loadFromXml(std::string fileName, Texture &texture)
-    {
-        TiXmlDocument animFile(fileName.c_str());
-        animFile.LoadFile();
-        TiXmlElement *head;
-        head = animFile.FirstChildElement("sprites");
-        TiXmlElement *animElement;
-        animElement = head->FirstChildElement("animation");
-        setAnimationsFromFile(animElement, texture);
-    }
+    void loadFromXml(std::string fileName, Texture &texture);
 
-    void setPosition(sf::Vector2f position)
-    {
-        animList[currentAnim].sprite.setPosition(position);
-    }
+    void setPosition(sf::Vector2f position);
 
-    float getCurrentFrame()
-    {
-        return animList[currentAnim].currentFrame;
-    }
+    float getCurrentFrame();
 
-    void setCurrentFrame(float currentFrame)
-    {
-        animList[currentAnim].currentFrame = currentFrame;
-    }
+    void setCurrentFrame(float currentFrame);
 
-    Animation getCurrentAnimation()
-    {
-        return animList[currentAnim];
-    }
+    Animation getCurrentAnimation();
 
-    int getCurrentSpriteSize()
-    {
-        return animList[currentAnim].getSpriteSize();
-    }
+    int getCurrentSpriteSize();
 
-    int getCurrentSpriteHeight()
-    {
-        return animList[currentAnim].getSpriteHeight();
-    }
+    int getCurrentSpriteHeight();
 
-    bool isLastFrame()
-    {
-        return getCurrentFrame() >= (float)getQuantityOfFrames() - 0.1;
-    }
+    bool isLastFrame();
 
-    int getQuantityOfFrames()
-    {
-        return animList[currentAnim].getQuantityOfFrames();
-    }
+    int getQuantityOfFrames();
 
-    void draw(RenderWindow &window)
-    {
-        setFrameOrigin();
-        window.draw(animList[currentAnim].sprite);
-    }
+    void draw(RenderWindow &window);
 
-    void resetAnimation()
-    {
-        animList[currentAnim].currentFrame = 0;
-    }
+    void resetAnimation();
 
-    void set(String name)
-    {
-        currentAnim = name;
-    }
+    void set(String name);
 
-    void flip(bool isFlip)
-    {
-        animList[currentAnim].flip = isFlip;
-    }
+    void flip(bool isFlip);
 
-    void tick(float time)
-    {
-        animList[currentAnim].tick(time);
-    }
+    void tick(float time);
 
-    void pause()
-    {
-        animList[currentAnim].isPlaying = false;
-    }
+    void pause();
 
-    void play()
-    {
-        animList[currentAnim].isPlaying = true;
-    }
+    void play();
 
-    void setFrameOrigin()
-    {
-        int frameHeight = animList[currentAnim].getFrameHeight();
-        animList[currentAnim].setOrigin(0, frameHeight);
-    }
+    void setFrameOrigin();
 
-    String getCurrentAnimationName()
-    {
-        return currentAnim;
-    }
+    String getCurrentAnimationName();
 
   private:
-    void setAnimationsFromFile(TiXmlElement *animElement, Texture &texture)
-    {
-        while (animElement)
-        {
-            Animation animation;
-            currentAnim = animElement->Attribute("title");
-            int delay = atoi(animElement->Attribute("delay"));
-            animation.speed = 1.0 / delay;
-            animation.sprite.setTexture(texture);
-            setFramesFromFile(animElement, animation);
-            animList[currentAnim] = animation;
-            animElement = animElement->NextSiblingElement("animation");
-        }
-    }
+    void setAnimationsFromFile(TiXmlElement *animElement, Texture &texture);
 
-    void setFramesFromFile(TiXmlElement *animElement, Animation &animation)
-    {
-        TiXmlElement *cut;
-        cut = animElement->FirstChildElement("cut");
-        while (cut)
-        {
-            int x = atoi(cut->Attribute("x"));
-            int y = atoi(cut->Attribute("y"));
-            int width = atoi(cut->Attribute("w"));
-            int height = atoi(cut->Attribute("h"));
-
-            animation.frames.push_back(IntRect(x, y, width, height));
-            animation.frames_flip.push_back(IntRect(x + width, y, -width, height));
-            cut = cut->NextSiblingElement("cut");
-        }
-    }
+    void setFramesFromFile(TiXmlElement *animElement, Animation &animation);
 };
 
 #endif
