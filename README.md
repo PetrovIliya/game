@@ -15,6 +15,8 @@ Space - lightsaber hit
 
 Q - Force stasis
 
+esc - pause/play
+
 Beware u'll die by 1 hit =)
 
 road map: https://docs.google.com/spreadsheets/d/1lZbhPhhATDzwcFScsEx7DBUXjw_2d45hmfYeVRmCv7A/edit?usp=sharing
