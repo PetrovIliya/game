@@ -16,3 +16,5 @@ Space - lightsaber hit
 Q - Force stasis
 
 Beware u'll die by 1 hit =)
+
+https://docs.google.com/spreadsheets/d/1lZbhPhhATDzwcFScsEx7DBUXjw_2d45hmfYeVRmCv7A/edit?usp=sharing
