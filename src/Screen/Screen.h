@@ -7,10 +7,10 @@
 
 class Screen
 {
-public:
+  public:
     bool needToReset = false;
     virtual Player getPlayer() = 0;
-    virtual void update(sf::RenderWindow &window, sf::View &view) = 0;
+    virtual void update(sf::RenderWindow &window, sf::View &view, bool isPlayerAlive) = 0;
 };
 
 #endif

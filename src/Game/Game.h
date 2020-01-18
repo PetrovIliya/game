@@ -12,21 +12,21 @@
 
 class Game
 {
-public:
+  public:
     sf::Text playerScore;
 
     Game(sf::Text text);
 
     void start(sf::RenderWindow &window, sf::View &view);
 
-private:
+  private:
     sf::Event event;
     Menu menu;
     std::string currentScreen;
-    std::map<std::string, Screen*> screens;
+    std::map<std::string, Screen *> screens;
     bool enter;
 
-    void playerDeathHandler();
+    void playerDeathHandler(bool isPlayerAlive);
 
     void pollEvents(sf::RenderWindow &window);
 

@@ -10,7 +10,7 @@ GameManager::GameManager(sf::Text playerScore)
     paused = wasPaused = false;
 }
 
-void GameManager::update(sf::RenderWindow &window, sf::View &view)
+void GameManager::update(sf::RenderWindow &window, sf::View &view, bool isPlayerAlive)
 {
     int leftEndOfView = view.getCenter().x - (window.getSize().x / 2);
     int rightEndOfView = view.getCenter().x + (window.getSize().x / 2);
@@ -48,13 +48,43 @@ Player GameManager::getPlayer()
 
 void GameManager::enemyGeneration(int rightEndOfView, int leftEndOfView)
 {
-    if (enemyTime >= 5)
+    int generationInterval;
+    if (player.score <= 100)
+    {
+        generationInterval = 6;
+    }
+    if (player.score > 100)
+    {
+        generationInterval = 5;
+    }
+    if (player.score > 200)
+    {
+        generationInterval = 4;
+    }
+    if (player.score > 400)
+    {
+        generationInterval = 3;
+    }
+    if (player.score > 600)
+    {
+        generationInterval = 2;
+    }
+    if (enemyTime >= generationInterval)
     {
         for (int i = 0; i < 3; i++)
         {
             Vector2f newPosition = {float(rightEndOfView + i * 200), 448};
             addClone(cloneTexture, newPosition, enemyCount, true);
             enemyCount++;
+        }
+        if (generationInterval <= 4)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Vector2f newPosition = {float(leftEndOfView - i * 200), 448};
+                addClone(cloneTexture, newPosition, enemyCount, false);
+                enemyCount++;
+            }
         }
         enemyClock.restart();
     }

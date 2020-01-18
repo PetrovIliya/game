@@ -9,25 +9,28 @@ Menu::Menu()
     newGame.loadFromFile("textures/newGame.png");
     exitTexture.loadFromFile("textures/exit.png");
     continueT.loadFromFile("textures/continueActive.png");
+    playerDeathTexture.loadFromFile("textures/deathWarning.png");
     backgroundSprite.setTexture(background);
     newGameSprite.setTexture(newGame);
     exitSprite.setTexture(exitTexture);
     continueSprite.setTexture(continueT);
+    playerDeathSprite.setTexture(playerDeathTexture);
     backgroundSprite.setPosition({0, 0});
     newGameSprite.setPosition({50, 400});
     continueSprite.setPosition({50, 300});
     exitSprite.setPosition({50, 500});
+    playerDeathSprite.setPosition({400, 200});
     menuItems.push_back(continueSprite);
     menuItems.push_back(newGameSprite);
     menuItems.push_back(exitSprite);
 }
 
-void Menu::update(sf::RenderWindow &window, sf::View &view)
+void Menu::update(sf::RenderWindow &window, sf::View &view, bool isPlayerAlive)
 {
     int leftEndOfView = view.getCenter().x - (window.getSize().x / 2);
     setCurrentPosition(leftEndOfView);
     selectMenuItemHandler();
-    draw(window);
+    draw(window, isPlayerAlive);
 }
 
 void Menu::setCurrentPosition(int leftEndOfView)
@@ -36,15 +39,19 @@ void Menu::setCurrentPosition(int leftEndOfView)
     menuItems[0].setPosition({leftEndOfView + 50, 300});
     menuItems[1].setPosition({leftEndOfView + 50, 400});
     menuItems[2].setPosition({leftEndOfView + 50, 500});
-
+    playerDeathSprite.setPosition({leftEndOfView + 400, 200});
 }
 
-void Menu::draw(sf::RenderWindow &window)
+void Menu::draw(sf::RenderWindow &window, bool isPlayerAlive)
 {
     window.draw(backgroundSprite);
     for (int i = 0; i < menuItems.size(); i++)
     {
         window.draw(menuItems[i]);
+    }
+    if (!isPlayerAlive)
+    {
+        window.draw(playerDeathSprite);
     }
 }
 
@@ -66,7 +73,7 @@ void Menu::selectMenuItemHandler()
             newGame.loadFromFile("textures/newGameActive.png");
         }
     }
-    if(movingUp)
+    if (movingUp)
     {
         movingUp = false;
         if (activeSpriteIndex == 1)

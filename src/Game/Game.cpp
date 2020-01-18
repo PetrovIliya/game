@@ -14,19 +14,20 @@ void Game::start(sf::RenderWindow &window, sf::View &view)
     window.setMouseCursorVisible(false);
     while (window.isOpen())
     {
+        bool isPlayerAlive = screens["game"]->getPlayer().isAlive;
         pollEvents(window);
         choseHandler(window, view);
-        playerDeathHandler();
+        playerDeathHandler(isPlayerAlive);
         window.clear(Color::White);
         window.setView(view);
-        screens[currentScreen]->update(window, view);
+        screens[currentScreen]->update(window, view, isPlayerAlive);
         window.display();
     }
 }
 
-void Game::playerDeathHandler()
+void Game::playerDeathHandler(bool isPlayerAlive)
 {
-    if (!screens["game"]->getPlayer().isAlive)
+    if (!isPlayerAlive)
     {
         currentScreen = "menu";
     }
@@ -38,15 +39,15 @@ void Game::pollEvents(sf::RenderWindow &window)
     {
         switch (event.type)
         {
-            case sf::Event::Closed:
-                window.close();
-                break;
-            case sf::Event::KeyPressed:
-                screenHandler(window);
-                menuHandler();
-                break;
-            default:
-                break;
+        case sf::Event::Closed:
+            window.close();
+            break;
+        case sf::Event::KeyPressed:
+            screenHandler(window);
+            menuHandler();
+            break;
+        default:
+            break;
         }
     }
 }
@@ -56,18 +57,18 @@ void Game::choseHandler(sf::RenderWindow &window, sf::View &view)
     if (enter)
     {
         enter = false;
-        if(menu.activeSpriteIndex == 0 && screens["game"]->getPlayer().isAlive)
+        if (menu.activeSpriteIndex == 0 && screens["game"]->getPlayer().isAlive)
         {
             currentScreen = "game";
         }
-        if(menu.activeSpriteIndex == 1)
+        if (menu.activeSpriteIndex == 1)
         {
             screens["game"] = new GameManager(Game::playerScore);
             Game::screens["game"]->getPlayer().recordHandler();
             currentScreen = "game";
             view.setCenter(WindowConfig::WINDOW_WIDTH / 2, WindowConfig::WINDOW_HEIGHT / 2);
         }
-        if(menu.activeSpriteIndex == 2)
+        if (menu.activeSpriteIndex == 2)
         {
             Game::screens["game"]->getPlayer().recordHandler();
             window.close();

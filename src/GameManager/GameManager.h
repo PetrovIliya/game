@@ -14,71 +14,71 @@
 
 class GameManager : public Screen
 {
-  public:
+public:
+  GameManager(sf::Text playerScore);
 
-    GameManager(sf::Text playerScore);
+  void update(sf::RenderWindow &window, sf::View &view, bool isPlayerAlive);
 
-    void update(sf::RenderWindow &window, sf::View &view);
+  void setPaused(bool paused);
 
-    void setPaused(bool paused);
+  void resetTime();
 
-    void resetTime();
+  Player getPlayer();
 
-    Player getPlayer();
+private:
+  bool paused, wasPaused;
+  int mapOffset, tileWidth, enemyCount;
+  Texture jediTexture, cloneTexture;
+  sf::Clock deltaClock, elapsedClock, enemyClock;
+  float deltaTime, elapsedTime, enemyTime, currentEnemyFrame;
+  Player player;
+  Level level;
+  std::list<Enemy *> enemies;
+  std::list<Enemy *>::iterator enemiesIt;
+  std::list<Enemy *>::iterator enemiesIt2;
+  std::list<Bullet *> bullets;
+  std::list<Bullet *>::iterator bulletsIt;
 
-  private:
-    bool paused, wasPaused;
-    int mapOffset, tileWidth, enemyCount;
-    Texture jediTexture, cloneTexture;
-    sf::Clock deltaClock, elapsedClock, enemyClock;
-    float deltaTime, elapsedTime, enemyTime, currentEnemyFrame;
-    Player player;
-    Level level;
-    std::list<Enemy *> enemies;
-    std::list<Enemy *>::iterator enemiesIt;
-    std::list<Enemy *>::iterator enemiesIt2;
-    std::list<Bullet *> bullets;
-    std::list<Bullet *>::iterator bulletsIt;
+  void
+  enemyGeneration(int rightEndOfView, int leftEndOfView);
 
-    void enemyGeneration(int rightEndOfView, int leftEndOfView);
+  void setMapOffset(sf::View &view);
 
-    void setMapOffset(sf::View &view);
+  void addClone(Texture &cloneTexture, sf::Vector2f position, int id, bool flip);
 
-    void addClone(Texture &cloneTexture, sf::Vector2f position, int id, bool flip);
+  void addBullet(Vector2f position, bool isEnemyFlip);
 
-    void addBullet(Vector2f position, bool isEnemyFlip);
+  void enemiesUpdate(RenderWindow &window, sf::View &view, int rightEndOfView, int leftEndOfView);
 
-    void enemiesUpdate(RenderWindow &window, sf::View &view, int rightEndOfView, int leftEndOfView);
+  void bulletsUpdate(RenderWindow &window, sf::View &view, Enemy *enemy, int playerSpriteSize, int enemySpriteSie);
 
-    void bulletsUpdate(RenderWindow &window, sf::View &view, Enemy *enemy, int playerSpriteSize, int enemySpriteSie);
+  void playerHitHandler(Bullet *bullet, int playerSpriteSize);
 
-    void playerHitHandler(Bullet *bullet, int playerSpriteSize);
+  void enemyHitHandler(Enemy *enemy, Bullet *bullet, int enemySpriteSie);
 
-    void enemyHitHandler(Enemy *enemy, Bullet *bullet, int enemySpriteSie);
+  void enemyPlayerCollisionHandler(Enemy *enemy, int playerSpriteSize, int enemySpriteSie, int emenySpriteHeight);
 
-    void enemyPlayerCollisionHandler(Enemy *enemy, int playerSpriteSize, int enemySpriteSie, int emenySpriteHeight);
+  void enemyEnemyColissionHandler(Enemy *enemy, int enemySpriteSie);
 
-    void enemyEnemyColissionHandler(Enemy *enemy, int enemySpriteSie);
+  void enemyStasisHandler(Enemy *enemy, int leftEndOfView, int rightEndOfView);
 
-    void enemyStasisHandler(Enemy *enemy, int leftEndOfView, int rightEndOfView);
+  void enemyLifeHandler(Enemy *enemy);
 
-    void enemyLifeHandler(Enemy *enemy);
+  void enemyAttackHandler(Enemy *enemy);
 
-    void enemyAttackHandler(Enemy *enemy);
+  void dletaTimeRestart();
 
-    void dletaTimeRestart();
+  bool isEnemyHited(Enemy *enemy, Bullet *bullet, int enemySpriteSie);
 
-    bool isEnemyHited(Enemy *enemy, Bullet *bullet, int enemySpriteSie);
+  bool inLeftAttackDistance(Enemy *enemy);
 
-    bool inLeftAttackDistance(Enemy *enemy);
+  bool inRightAttackDistance(Enemy *enemy);
 
-    bool inRightAttackDistance(Enemy *enemy);
+  bool isTopColission(Enemy *enemy, int emenySpriteHeight);
 
-    bool isTopColission(Enemy *enemy, int emenySpriteHeight);
+  bool isLeftColission(Enemy *enemy, int playerSpriteSize);
 
-    bool isLeftColission(Enemy *enemy, int playerSpriteSize);
-
-    bool isRightColission(Enemy *enemy, int enemySpriteSie);
+  bool isRightColission(Enemy *enemy, int enemySpriteSie);
 };
 
 #endif
